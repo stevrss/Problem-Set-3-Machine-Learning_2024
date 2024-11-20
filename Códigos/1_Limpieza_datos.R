@@ -447,14 +447,52 @@
   
 #Mapas --------------------------------------
   
-  
+  #Base train
   ggplot()+
     geom_sf(data=local, color = "blue") + #shapefile de comunas
     geom_sf(data=sf_train,aes(color = precio_mt2) ,shape=15, size=0.3)+
     theme_bw()
   
+  #Base test  
+  ggplot()+
+    geom_sf(data=local, color = "blue") + 
+    geom_sf(data=sf_test,shape=15, size=0.3,color="orange") +
+    theme_bw()
   
   
+#Mapa por apartamento y casa -  Distribución de propiedaedes
+  
+  ggplot() +
+    geom_sf(data = local, aes(fill = Nombre.de.la.localidad), color = "black", lwd = 0.3) + 
+    geom_sf(data = sf_train %>% filter(property_type == "Apartamento"), aes(color = "Apartamento"), shape = 16, size = 0.5, alpha = 0.6) +
+    geom_sf(data = sf_train %>% filter(property_type == "Casa"), aes(color = "Casa"), shape = 16, size = 0.5, alpha = 0.8) +
+    scale_fill_manual(
+      name = "Localidad",
+      values = c(
+        "CHAPINERO" = "#B0E2FF", # Azul más elegante para Chapinero
+        .default = "#F0F0F0"     # Gris claro para el resto
+      )
+    ) +
+    scale_color_manual(
+      name = "Tipo de Propiedad", 
+      values = c(Apartamento = "#1874CD", Casa = "#d73027") # Azul claro y rojo intenso
+    ) +
+    labs(
+      title = "Distribución de Propiedades por Localidad",
+      x = "Longitud",
+      y = "Latitud"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size = 18, face = "bold", color = "black", hjust = 0.5),
+      plot.subtitle = element_text(size = 12, face = "italic", hjust = 0.5),
+      legend.title = element_text(size = 12, face = "bold"),
+      legend.text = element_text(size = 10),
+      panel.background = element_rect(fill = "white", color = NA),
+      panel.grid.major = element_line(color = "grey90"),
+      axis.title = element_text(size = 12, face = "bold"),
+      axis.text = element_text(size = 10)
+    )
   
   #-------------------------------------------------------------------------------
 # 8. Creacion variables a  parir del texto -------------------------------------
