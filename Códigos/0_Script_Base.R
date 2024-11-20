@@ -55,4 +55,5 @@ ifelse(grepl("Usuario", getwd()), # Diego
                                    wd <- "Directorio",  # Jorge
                                    ifelse(grepl("Steven Ramirez", getwd()), 
                                           wd <- "C:/Users/Steven Ramirez/Downloads/Problem-Set-2_Machine-Learning_2024/Problem-Set-2_Machine-Learning_2024",
+                                          "otro_directorio"))))))
 

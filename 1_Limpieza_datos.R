@@ -2,3 +2,16 @@
 #---------------------- LIMPIEZA DATA - PROBLEM SET 3 -------------------------#
 #------------------------------------------------------------------------------#
 
+#-------------------------------------------------------------------------------
+# 1. Cargar base de datos de entrenamiento y testeo ----------------------------
+#-------------------------------------------------------------------------------
+
+  setwd(paste0(wd,"/Datos")) #Directorios
+  train <- train <- import("train.csv") #Base de entrenamiento
+  test <- import("test.csv") # Base de testeo
+  
+
+  
+  dim(test)
+  names(train) 
+  
