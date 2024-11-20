@@ -23,6 +23,7 @@ p_load(
   stringi,       # Manipulación avanzada de cadenas de texto
   readr,         # Lectura rápida de archivos de texto y CSV
   skimr,         # Resúmenes estadísticos rápidos y detallados de datasets
+  stargazer,
   # Paquetes para manejo de datos espaciales
   sf,            # Manejo y análisis de datos espaciales en formato simple (e.g., shapefiles, GeoJSON)
   leaflet,       # Visualización interactiva de mapas en R
@@ -37,7 +38,14 @@ p_load(
   SuperLearner,   # Meta-modelo para combinar múltiples algoritmos de machine learning y mejorar la predicción
   #Redes neuronales
   nnet, # redes neuronales de una sola capa
-  Brulee # Redes neuronales mas complejas
+  Brulee, # Redes neuronales mas complejas
+
+  
+  skimr,     # datos de resumen
+  visdat,    # visualizacion de datos faltantes
+  corrplot,  # graficos de correlacion
+  stargazer, # tablas/salida a TEX.
+  modeest,   #Moda
 )
 
 
