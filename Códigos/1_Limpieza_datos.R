@@ -323,8 +323,7 @@
   
   # Histograma ----------------------------------------------------
   
-    
-    #Densidad
+   #Densidad
   hist((train$price / 1000000), probability = TRUE, col = '#A6CFE2', border = "grey30", breaks = 25, 
        xlab = "Precio (millones)", main = "Distribución del Precio (en millones)")
   abline(v = mean((train$price / 1000000)), col = 'red', lwd = 3, lty = 2)
@@ -348,4 +347,116 @@
     scale_fill_manual(values=c("cadetblue4", "darkorange"))+
     guides(fill = guide_legend(title = "Inmueble"))+
     facet_wrap(~property_type)
+  
+  
+  
+#-------------------------------------------------------------------------------
+# 7. Datos espaciales ----------------------------------------------------------
+#-------------------------------------------------------------------------------   
+  
+# Verificar la cantidad de valores NA en lon y lat (No hay NA)
+    sum(is.na(train$lon))  # Número de NA en la columna lon
+    sum(is.na(train$lat))  # Número de NA en la columna lat
+  
+# Observamos la primera visualización
+    
+  ##. primera visualización de datos (train)
+    
+    leaflet() %>% #Mirar mapa
+      addTiles() %>%
+      addCircles(lng = train$lon, #Longitud
+                 lat = train$lat) #Latitud
+    names(train)
+    
+  ##. primera visualización de datos (test)
+    leaflet() %>%
+      addTiles() %>%
+      addCircles(lng = test$lon, 
+                 lat = test$lat)
+    
+# Georeferencia por localidad en Bogota ----------------------------------------
+  
+  setwd(paste0(wd,"/Datos espaciales/Localidades")) #Directorio datos 
+  local <- subset(localidades, !(Nombre.de.la.localidad == "SUMAPAZ")) #quitar Sumapaz <- st_read("poligonos-localidades.geojson")
+  local <- subset(localidades, !(Nombre.de.la.localidad == "SUMAPAZ")) #quitar Sumapaz
+ 
+   #Mapa de localidades
+  local <- st_transform(local,4626)
+  ggplot()+
+    geom_sf(data=local, color = "black")
+  
+    #Mapa - resaltando solo Chapinero
+  ggplot() +
+    geom_sf(data = local, aes(fill = Nombre.de.la.localidad), color = "black", lwd = 0.3) +
+    scale_fill_manual(
+      values = c(
+        "CHAPINERO" = "#FF6F61", # Resaltado en un color distintivo
+        .default = "#B0BEC5"     # Todas las demás localidades en gris
+      )
+    ) +
+    labs(
+      title = "Mapa de Localidades"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+      legend.title = element_blank(), # Eliminar título de la leyenda
+      legend.position = "right",
+      legend.text = element_text(size = 10)
+    )
+
+    #Mapra con todas las localidades
+  ggplot() +
+    geom_sf(data = local, aes(fill = Nombre.de.la.localidad), color = "black", lwd = 0.3) +
+    labs(
+      title = "Mapa de Localidades",
+      fill = "Localidades"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+      legend.position = "right",
+      legend.title = element_text(size = 12, face = "bold"),
+      legend.text = element_text(size = 10)
+    )
+  
+  
+ # Convertir en datos espaciales las bases de train y test
+  sf_train<- st_as_sf(train, coords = c("lon", "lat"),  crs = 4626)
+  sf_test<- st_as_sf(test, coords = c("lon", "lat"),  crs = 4626)
+
+  # Realizar la unión espacial basada en la proximidad de coordenadas
+  
+    #Base train
+  sf_train <- st_join(sf_train, local, join = st_intersects)
+  names(sf_train)
+  dim(sf_train)
+  
+    #Base test
+  sf_test <- st_join(sf_test, local, join = st_intersects)
+  names(sf_test)
+  dim(sf_test)
+  
+  # Agregar variable a train y test  
+  train$localidad <- sf_train$Nombre.de.la.localidad
+  names(train)
+  
+  test$localidad <- sf_test$Nombre.de.la.localidad
+  names(test)
+  
+  
+#Mapas --------------------------------------
+  
+  
+  ggplot()+
+    geom_sf(data=local, color = "blue") + #shapefile de comunas
+    geom_sf(data=sf_train,aes(color = precio_mt2) ,shape=15, size=0.3)+
+    theme_bw()
+  
+  
+  
+  
+  #-------------------------------------------------------------------------------
+# 8. Creacion variables a  parir del texto -------------------------------------
+#-------------------------------------------------------------------------------  
   
