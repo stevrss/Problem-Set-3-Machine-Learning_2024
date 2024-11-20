@@ -34,7 +34,10 @@ p_load(
   tidymodels,    # Framework para construir y evaluar modelos de machine learning en un entorno 'tidy'
   xgboost,       # Algoritmo de gradient boosting optimizado para tareas de clasificación y regresión
   gbm,           # Modelado de boosting basado en árboles de decisión (Gradient Boosting Machines)
-  SuperLearner   # Meta-modelo para combinar múltiples algoritmos de machine learning y mejorar la predicción
+  SuperLearner,   # Meta-modelo para combinar múltiples algoritmos de machine learning y mejorar la predicción
+  #Redes neuronales
+  nnet, # redes neuronales de una sola capa
+  Brulee # Redes neuronales mas complejas
 )
 
 
