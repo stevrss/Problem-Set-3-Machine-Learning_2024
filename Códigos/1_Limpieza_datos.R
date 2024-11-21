@@ -255,72 +255,7 @@
   stargazer(train)
   stargazer(train,type="text")
   
-  #Histograma de las nueva var
-  #####Datos - problem set 3######
-  
-  #se define la ruta
-  setwd(paste0(wd,"/stores"))
-  
-  # se cargan las bases de datos -------------------------------------------------
-  train <- read.csv("train.csv")
-  test <- read.csv("test.csv")
-  
-  #dimensiones
-  dim(train) #386644 obs y 16 variables
-  dim(test) #10286 y 16 variables (var de precio está en NA)
-  
-  #variables
-  colnames(train)
-  colnames(test)
-  
-  # missing values ---------------------------------------------------------------
-  vis_dat(train) +
-    scale_fill_manual(values = c(
-      "character" = "thistle1",
-      "integer" = "plum",
-      "numeric" = "mediumpurple",
-      "NA" = "azure3"
-    ))
-  vis_dat(test)
-  # hay NA en "surface_total", "surface_covered","rooms","bathrooms"
-  sum(is.na(train$surface_total)) #30.790
-  sum(is.na(train$surface_covered)) #30.079
-  sum(is.na(train$rooms)) #18.260
-  sum(is.na(train$bathrooms)) #10.071
-  
-  # imputación de datos ----------------------------------------------------------
-  # rooms, surface_total y surface_covered
-  train <- train %>%
-    group_by(property_type) %>%
-    mutate(rooms2 = ifelse(is.na(rooms), mlv(rooms,na.rm = T), rooms),
-           bathrooms2 = ifelse(is.na(bathrooms), mlv(rooms,na.rm = T), bathrooms), #moda de cuartos
-           surface_total2 = ifelse(is.na(surface_total), mean(surface_total,na.rm = T), surface_total), #media de superficie total
-           surface_covered2 = ifelse(is.na(surface_covered), mean(surface_covered,na.rm = T), surface_covered)) #media de superficie cubierta
-  
-  test <- test %>%
-    group_by(property_type) %>%
-    mutate(rooms2 = ifelse(is.na(rooms), mlv(rooms,na.rm = T), rooms),
-           bathrooms2 = ifelse(is.na(bathrooms), mlv(rooms,na.rm = T), bathrooms), #moda de cuartos
-           surface_total2 = ifelse(is.na(surface_total), mean(surface_total,na.rm = T), surface_total), #media de superficie total
-           surface_covered2 = ifelse(is.na(surface_covered), mean(surface_covered,na.rm = T), surface_covered)) #media de superficie cubierta
-  
-  train <- as.data.frame(train)
-  test <- as.data.frame(test)
-  # creación, modificación de variables ------------------------------------------
-  ## Transformacion Log(Precio)
-  train$Log_Precio <- log(train$price)
-  
-  # precio x metro cuadrado
-  train <- train %>%
-    mutate(precio_mt2 = round(price/surface_total2,0))%>%
-    mutate(precio_mt2 = precio_mt2/1000000)  # precio x Mt2 en millones
-  summary(train$precio_mt2)
-  
-  # estadísticas descriptivas ----------------------------------------------------
-  stargazer(train)
-  stargazer(tr,type="text")
-  
-  
+
   # Histograma ----------------------------------------------------
   
    #Densidad
@@ -405,7 +340,7 @@
       legend.text = element_text(size = 10)
     )
 
-    #Mapra con todas las localidades
+    #Mapa con todas las localidades
   ggplot() +
     geom_sf(data = local, aes(fill = Nombre.de.la.localidad), color = "black", lwd = 0.3) +
     labs(
@@ -444,7 +379,6 @@
   test$localidad <- sf_test$Nombre.de.la.localidad
   names(test)
   
-  
 #Mapas --------------------------------------
   
   #Base train
@@ -462,30 +396,33 @@
   
 #Mapa por apartamento y casa -  Distribución de propiedaedes
   
+  #Base train 
   ggplot() +
     geom_sf(data = local, aes(fill = Nombre.de.la.localidad), color = "black", lwd = 0.3) + 
-    geom_sf(data = sf_train %>% filter(property_type == "Apartamento"), aes(color = "Apartamento"), shape = 16, size = 0.5, alpha = 0.6) +
-    geom_sf(data = sf_train %>% filter(property_type == "Casa"), aes(color = "Casa"), shape = 16, size = 0.5, alpha = 0.8) +
+    geom_sf(data = sf_train %>% filter(property_type == "Apartamento"), aes(color = "Apartamento"), shape = 16, size = 0.8, alpha = 0.6) +
+    geom_sf(data = sf_train %>% filter(property_type == "Casa"), aes(color = "Casa"), shape = 16, size = 0.8, alpha = 0.8) +
     scale_fill_manual(
       name = "Localidad",
       values = c(
-        "CHAPINERO" = "#B0E2FF", # Azul más elegante para Chapinero
-        .default = "#F0F0F0"     # Gris claro para el resto
-      )
-    ) +
+        "CHAPINERO" = "#ADD8E6", # Azul claro
+        .default = "#FAFAFA"     # Gris muy claro
+      )) +
     scale_color_manual(
       name = "Tipo de Propiedad", 
-      values = c(Apartamento = "#1874CD", Casa = "#d73027") # Azul claro y rojo intenso
+      values = c(Apartamento = "#4682B4", Casa = "#d73027") # Azul medio y rojo tomate
     ) +
+    guides(
+      color = guide_legend(
+        override.aes = list(size = 2) # Cambia el tamaño de los puntos en la leyenda
+      )    ) +
     labs(
       title = "Distribución de Propiedades por Localidad",
       x = "Longitud",
-      y = "Latitud"
-    ) +
+      y = "Latitud" ) +
     theme_minimal() +
     theme(
       plot.title = element_text(size = 18, face = "bold", color = "black", hjust = 0.5),
-      plot.subtitle = element_text(size = 12, face = "italic", hjust = 0.5),
+      plot.subtitle = element_text(size = 12, face = "italic", color = "black", hjust = 0.5),
       legend.title = element_text(size = 12, face = "bold"),
       legend.text = element_text(size = 10),
       panel.background = element_rect(fill = "white", color = NA),
@@ -494,7 +431,208 @@
       axis.text = element_text(size = 10)
     )
   
-  #-------------------------------------------------------------------------------
+  #Base train 
+  ggplot() +
+    geom_sf(data = local, aes(fill = Nombre.de.la.localidad), color = "black", lwd = 0.3) + 
+    geom_sf(data = sf_test %>% filter(property_type == "Apartamento"), aes(color = "Apartamento"), shape = 16, size = 0.8, alpha = 0.6) +
+    geom_sf(data = sf_test %>% filter(property_type == "Casa"), aes(color = "Casa"), shape = 16, size = 0.8, alpha = 0.8) +
+    scale_fill_manual(
+      name = "Localidad",
+      values = c(
+        "CHAPINERO" = "#ADD8E6", # Azul claro
+        .default = "#FAFAFA"     # Gris muy claro
+      )) +
+    scale_color_manual(
+      name = "Tipo de Propiedad", 
+      values = c(Apartamento = "#4682B4", Casa = "#d73027") # Azul medio y rojo tomate
+    ) +
+    guides(
+      color = guide_legend(
+        override.aes = list(size = 2) # Cambia el tamaño de los puntos en la leyenda
+      )    ) +
+    labs(
+      title = "Distribución de Propiedades por Localidad",
+      x = "Longitud",
+      y = "Latitud" ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size = 18, face = "bold", color = "black", hjust = 0.5),
+      plot.subtitle = element_text(size = 12, face = "italic", color = "black", hjust = 0.5),
+      legend.title = element_text(size = 12, face = "bold"),
+      legend.text = element_text(size = 10),
+      panel.background = element_rect(fill = "white", color = NA),
+      panel.grid.major = element_line(color = "grey90"),
+      axis.title = element_text(size = 12, face = "bold"),
+      axis.text = element_text(size = 10)
+    )
+  
+  
+  
+#-------------------------------------------------------------------------------
+#Creacion de variables a partir de informacions geoespacial ------------------#
+#-------------------------------------------------------------------------------
+ 
+ #Sacar informacion espacial de Bogota
+  
+  # Posibles categorías de las que podemos extraer información geosespacial. 
+  print(available_tags("leisure"))
+  print(available_tags("amenity"))
+  print(available_tags("public_transport"))
+  
+  
+  
+  print(available_features()) # para ver todas las categorias
+   print(available_features("amenity")) # para ver todas las categorias
+ 
+  #Informacion espacial de Bogots
+  bogota<-opq(bbox = getbb("Bogotá Colombia"))
+  bogota
+  
+#Informacion especifica a extraer
+  
+#--------------------#
+#      Parques
+#--------------------#
+  
+    # Extraemos la info de todos los parques de Cali
+    parques <- opq(bbox = getbb("Bogotá Colombia")) %>%
+      add_osm_feature(key = "leisure" , value = "park") 
+  
+    # Cambiamos el formato para que sea un objeto sf (simple features)
+    parques_sf <- osmdata_sf(parques)
+    
+    # De las features del parque nos interesa su geometría y donde están ubicados 
+    parques_geometria <- parques_sf$osm_polygons %>% 
+      dplyr::select(osm_id, name) 
+    
+    # Guardemos los polígonos de los parques 
+    parques_geometria <- st_as_sf(parques_sf$osm_polygons)
+  
+    # Calculamos el centroide de cada parque para aproximar su ubicación como un solo punto 
+    centroides <- st_centroid(parques_geometria, byid = T)
+    centroides <- centroides %>%
+      mutate(x=st_coordinates(centroides)[, "X"]) %>%
+      mutate(y=st_coordinates(centroides)[, "Y"]) 
+    
+    #Creacion de los mapas con los parques
+    leaflet() %>%
+      addTiles() %>%
+      setView(lng = longitud_central, lat = latitud_central, zoom = 12) %>%
+      addPolygons(data = parques_geometria, col = "red",weight = 10,
+                  opacity = 0.8, popup = parques_geometria$name) %>%
+      addCircles(lng = centroides$x, 
+                 lat = centroides$y, 
+                 col = "darkblue", opacity = 0.5, radius = 1)
+  
+    #Aegurar que la proyeccion de los centroides y datos de propiedades
+    centroides_sf <- st_as_sf(centroides, coords = c("x", "y"), crs=4326)
+    sf_train<- st_as_sf(train, coords = c("lon", "lat"),  crs = 4326)
+  
+  #Calcular distancia de la propiedad al parque mas cercano -----
+  
+    # Esto va a ser demorado!
+    dist_matrix <- st_distance(x = sf_train, y = centroides_sf)
+    dim(dist_matrix)
+  
+    #Encontrar la distancia minima a cualquier parque
+    dist_min <- apply(dist_matrix, 1, min)  
+  
+  # La agregamos como variable a nuestra base de datos original ---
+   train <- train %>% mutate(distancia_parque = dist_min)
+  
+  #Distribucion de la distancia alos pagues
+   p <- ggplot(train%>%sample_n(1000), aes(x = distancia_parque, y = price)) +
+     geom_point(col = "darkblue", alpha = 0.4) +
+     labs(x = "Distancia mínima a un parque en metros (log-scale)", 
+          y = "Valor de venta  (log-scale)",
+          title = "Relación entre la proximidad a un parque y el precio del immueble") +
+     scale_x_log10() +
+     scale_y_log10(labels = scales::dollar) +
+     theme_bw()
+   ggplotly(p)
+  
+  
+  # Ahora vamos a evaluar si el tamaño del parque más cercano influye
+  posicion <- apply(dist_matrix, 1, function(x) which(min(x) == x))
+  # De la geometría de los parques extraemos el área
+  areas <- st_area(parques_geometria)
+  #Agregamos la variable a nuestra base de datos original
+  train <- train %>%
+    mutate(area_parque = as.numeric(areas[posicion]))
+  
+    
+    #Relacion
+  p <- ggplot(train%>%sample_n(1000), aes(x = area_parque, y = price)) +
+    geom_point(col = "darkblue", alpha = 0.4) +
+    labs(x = "Área del parque más cercano (log-scale)", 
+         y = "Valor del arriendo (log-scale)",
+         title = "Relación entre área de un parque y el precio del immueble") +
+    scale_x_log10() +
+    scale_y_log10(labels = scales::dollar) +
+    theme_bw()
+  ggplotly(p)
+  
+
+#--------------------#
+#Estacion de policia
+#--------------------#
+  
+  police <- bogota %>% 
+    add_osm_feature(key="amenity",value="police") %>% #amenities disponibles
+    osmdata_sf() #transformamos a un objeto sf
+  
+  # Centroides de los puntos 
+  puntos_police<-police$osm_point
+  head(puntos_police)
+  
+  
+  
+  
+#--------------------#
+#      Barrios
+#--------------------#
+  
+
+  
+#-------------------------------------------------------------------------------
 # 8. Creacion variables a  parir del texto -------------------------------------
 #-------------------------------------------------------------------------------  
+  
+#Limpieza usando texto ----------------------------------------------------
+  train$description[2]
+  
+  #Normalizar el texto ----
+  
+  # Todo en minúscula
+  train <- train %>%
+    mutate(description = str_to_lower(description))
+  # Eliminamos tildes
+  train <- train %>%
+    mutate(description = iconv(description, from = "UTF-8", to = "ASCII//TRANSLIT"))
+  # Eliminamos caracteres especiales
+  train <- train %>%
+    mutate(description = str_replace_all(description, "[^[:alnum:]]", " "))
+  # Eliminamos espacios extras
+  train <- train %>%
+    mutate(description = str_trim(gsub("\\s+", " ", description)))
+  
+  #Miremos los cambios 
+  db$description[2]
+  
+#Arreglar la variable property type
+  
+  # Se crea una nueva columna llamada property_type_2. Si "casa" está en la descripción, se asigna "Casa" a esta columna; de lo contrario, se mantiene el valor original de property_type
+  train <- train %>%
+    mutate(property_type_2 = ifelse(grepl("casa", description), "Casa", property_type))
+  
+  # Se repite el caso anterior pero ahora buscamos apartamento o apto.
+  train <- train %>%
+    mutate(property_type_2 = ifelse(grepl("apto|apartamento", description), "Apartamento", property_type_2))%>%
+    select(-property_type)   
+  table(train$property_type_2)
+  table(train$property_type)
+  
+#---------------------#
+#      Pisos 
+#---------------------#
   
