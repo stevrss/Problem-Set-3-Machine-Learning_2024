@@ -234,8 +234,15 @@
 #-------------------------------------------------------------------------------  
   
   #Mirar distribuciones de variables numericas
+  
+    #Base train
   stargazer(train)
   stargazer(train,type="text")
+  
+   #Base test
+  stargazer(test)
+  stargazer(test,type="text")
+  
   
 #-------------------------------------------------------------------------------
 # 6. Creacion de variables -----------------------------------------------------
@@ -250,13 +257,31 @@
     mutate(precio_mt2 = round(price/surface_total_median,0))%>%
     mutate(precio_mt2 = precio_mt2/1000000)  # precio x Mt2 en millones
   summary(train$precio_mt2)
+  stargazer(train["precio_mt2"],type="text")
   
   # estadísticas descriptivas 
   stargazer(train)
   stargazer(train,type="text")
   
 
-  # Histograma ----------------------------------------------------
+# Histograma -----------------------------------------------------------
+  
+  # Frecuencia
+  
+    #Forma 1 
+  p <- ggplot(train, aes(x = price/ 1000000)) +
+    geom_histogram(fill = "darkblue", alpha = 0.4) +
+    labs(x = "Precio", y = "Cantidad") +
+    theme_bw()
+  ggplotly(p)
+  
+    #Forma 2
+  p <- ggplot(train, aes(x = price)) +
+    geom_histogram(fill = "darkblue", alpha = 0.4) +
+    labs(x = "Valor de venta (log-scale)", y = "Cantidad") +
+    scale_x_log10(labels = scales::dollar) +
+    theme_bw()
+  ggplotly(p)
   
    #Densidad
   hist((train$price / 1000000), probability = TRUE, col = '#A6CFE2', border = "grey30", breaks = 25, 
@@ -265,12 +290,7 @@
   lines(density((train$price / 1000000)), col = '#00008B', lwd = 3)
   legend("topright", legend = c("Media", "Densidad"), col = c("red", "#00008B"), lty = c(2, 1), lwd = 3, bty = "n")
   
-  # Frecuencia
-  p <- ggplot(train, aes(x = price/ 1000000)) +
-    geom_histogram(fill = "darkblue", alpha = 0.4) +
-    labs(x = "Precio", y = "Cantidad") +
-    theme_bw()
-  
+
   #Frecuencias por tipo de propiedad
   media_apto <- mean((train$price[train$property_type == "Apartamento"])/1000000)
   media_casa <- mean((train$price[train$property_type == "Casa"])/1000000)
@@ -284,10 +304,15 @@
     facet_wrap(~property_type)
   
   
-  
 #-------------------------------------------------------------------------------
 # 7. Datos espaciales ----------------------------------------------------------
 #-------------------------------------------------------------------------------   
+  
+  # Eliminamos las observaciones que no tienen información de latitud o longitud
+  train <- train %>%
+    filter(!is.na(lat) & !is.na(lon))
+  dim(train)
+  
   
 # Verificar la cantidad de valores NA en lon y lat (No hay NA)
     sum(is.na(train$lon))  # Número de NA en la columna lon

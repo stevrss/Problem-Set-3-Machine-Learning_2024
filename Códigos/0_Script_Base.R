@@ -46,6 +46,8 @@ p_load(
   corrplot,  # graficos de correlacion
   stargazer, # tablas/salida a TEX.
   modeest,   #Moda
+  ggplot2,    #Graficos
+  plotly
 )
 
 
