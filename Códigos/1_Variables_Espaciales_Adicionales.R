@@ -1,0 +1,2 @@
+# Variables adicionales espaciales
+
