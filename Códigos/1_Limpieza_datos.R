@@ -311,9 +311,9 @@
     
 # Georeferencia por localidad en Bogota ----------------------------------------
   
-  setwd(paste0(wd, "\Datos espaciales\\Localidades")) #Directorio datos
+  setwd(paste0(wd, "\\Datos espaciales\\Localidades")) #Directorio datos
   local <- st_read("poligonos-localidades.geojson")
-  local <- subset(localidades, !(Nombre.de.la.localidad == "SUMAPAZ")) #quitar Sumapaz <- st_read("poligonos-localidades.geojson")
+  local <- subset(local, !(Nombre.de.la.localidad == "SUMAPAZ")) #quitar Sumapaz <- st_read("poligonos-localidades.geojson")
 
    #Mapa de localidades
   local <- st_transform(local,4626)
@@ -431,7 +431,7 @@
       axis.text = element_text(size = 10)
     )
   
-  #Base train 
+  #Base test 
   ggplot() +
     geom_sf(data = local, aes(fill = Nombre.de.la.localidad), color = "black", lwd = 0.3) + 
     geom_sf(data = sf_test %>% filter(property_type == "Apartamento"), aes(color = "Apartamento"), shape = 16, size = 0.8, alpha = 0.6) +
@@ -632,7 +632,6 @@
   test <- test %>%
     mutate(n_pisos= str_extract(description, "(\\w+|\\d+) pisos")) %>%
     mutate(n_pisos= ifelse(property_type=="Casa", n_pisos, NA))
-  
   
   #Convertir los numeros escritos a numericos
   numeros_escritos <- c( "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", 
