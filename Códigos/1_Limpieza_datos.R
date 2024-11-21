@@ -311,10 +311,10 @@
     
 # Georeferencia por localidad en Bogota ----------------------------------------
   
-  setwd(paste0(wd,"/Datos espaciales/Localidades")) #Directorio datos 
+  setwd(paste0(wd, "\Datos espaciales\\Localidades")) #Directorio datos
+  local <- st_read("poligonos-localidades.geojson")
   local <- subset(localidades, !(Nombre.de.la.localidad == "SUMAPAZ")) #quitar Sumapaz <- st_read("poligonos-localidades.geojson")
-  local <- subset(localidades, !(Nombre.de.la.localidad == "SUMAPAZ")) #quitar Sumapaz
- 
+
    #Mapa de localidades
   local <- st_transform(local,4626)
   ggplot()+
@@ -476,14 +476,8 @@
   
   # Posibles categorías de las que podemos extraer información geosespacial. 
   print(available_tags("leisure"))
-  print(available_tags("amenity"))
-  print(available_tags("public_transport"))
-  
-  
-  
   print(available_features()) # para ver todas las categorias
-   print(available_features("amenity")) # para ver todas las categorias
- 
+
   #Informacion espacial de Bogots
   bogota<-opq(bbox = getbb("Bogotá Colombia"))
   bogota
@@ -577,16 +571,7 @@
 #Estacion de policia
 #--------------------#
   
-  police <- bogota %>% 
-    add_osm_feature(key="amenity",value="police") %>% #amenities disponibles
-    osmdata_sf() #transformamos a un objeto sf
-  
-  # Centroides de los puntos 
-  puntos_police<-police$osm_point
-  head(puntos_police)
-  
-  
-  
+
   
 #--------------------#
 #      Barrios
@@ -617,7 +602,7 @@
     mutate(description = str_trim(gsub("\\s+", " ", description)))
   
   #Miremos los cambios 
-  db$description[2]
+  train$description[2]
   
 #Arreglar la variable property type
   
@@ -635,4 +620,30 @@
 #---------------------#
 #      Pisos 
 #---------------------#
+  
+  # Creando nuevas variables usando texto ----------------------------------------
+
+  # Base train
+  train <- train %>%
+    mutate(n_pisos= str_extract(description, "(\\w+|\\d+) pisos")) %>%
+    mutate(n_pisos= ifelse(property_type=="Casa", n_pisos, NA))
+  
+  #Base test
+  test <- test %>%
+    mutate(n_pisos= str_extract(description, "(\\w+|\\d+) pisos")) %>%
+    mutate(n_pisos= ifelse(property_type=="Casa", n_pisos, NA))
+  
+  
+  #Convertir los numeros escritos a numericos
+  numeros_escritos <- c( "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", 
+                         "diez","once","doce","trece","catorce","quince")
+  numeros_numericos <- as.character(2:15)
+  
+  
+  train <- train %>%
+    mutate(n_pisos = str_replace_all(n_pisos, setNames(numeros_numericos,numeros_escritos)))
+  
+  test <- test %>%
+    mutate(n_pisos = str_replace_all(n_pisos, setNames(numeros_numericos,numeros_escritos)))  
+  
   
