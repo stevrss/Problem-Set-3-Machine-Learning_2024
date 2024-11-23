@@ -27,13 +27,13 @@
   #Base de entrenamiento
   names(train)  
   str(train)  
-  table(train$property_type) #Solo hay apartamentos y casas
-  table(train$city) #Solo Bogota
-  table(train$operation_type) #Solo venta
+  table(train$property_type) # Solo hay apartamentos y casas
+  table(train$city) # Solo Bogota
+  table(train$operation_type) # Solo venta
   
   #Base de test
   names(test) 
-  str(test)  # variables de precio está en NA
+  str(test)  # variable de precio esta en NA
   table(test$property_type) #Solo hay apartamentos y casas
   table(test$city) #Solo Bogota
   table(test$operation_type) #Solo venta
