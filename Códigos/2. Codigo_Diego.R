@@ -118,12 +118,12 @@ test_full<-  test %>%
 
 ## Creamos una data full con las dummys 
 # Crear dummys train
-dummys <- dummy(subset(train_full, select = c(property_type_2, barrio)))
+dummys <- dummy(subset(train_full, select = c(property_type_2)))
 dummys <- as.data.frame(apply(dummys,2,function(x){as.numeric(x)}))
 train_full_dummys <- cbind(subset(train_full, select = -c(property_type, localidad)),dummys)
 
 #crear dummys test
-dummys <- dummy(subset(test_full, select = c(property_type_2, barrio)))
+dummys <- dummy(subset(test_full, select = c(property_type_2)))
 dummys <- as.data.frame(apply(dummys,2,function(x){as.numeric(x)}))
 test_full_dummys <- cbind(subset(test_full, select = -c(property_type, localidad)),dummys)
 
@@ -131,3 +131,102 @@ test_full_dummys <- cbind(subset(test_full, select = -c(property_type, localidad
 train_full_dummys <- train_full_dummys[c(colnames(test_full_dummys),"price")]
 #Quitamos el segundo price de la train full dummys
 train_full_dummys$price.1=NULL
+
+#- 4.8 | Modelo Boosting 8 sin tantas variables ----------------------------------------
+
+fitControl <- trainControl(method ="cv",number=5)
+
+#Cargamos los parámetros del boosting
+grid_xbgoost <- expand.grid(nrounds = c(500),
+                            max_depth = c(4), 
+                            eta = c(0.25,0.5), 
+                            gamma = c(0), 
+                            min_child_weight = c(50),
+                            colsample_bytree = c(0.33,0.66),
+                            subsample = c(0.4))
+
+
+#xgboost sin tantas variables y componentes principales
+set.seed(1702)
+XGBoost_model8 <- train(price ~ distancia_parque + area_parque + distancia_policia + distancia_gym +
+                          distancia_bus + distancia_super + distancia_bar + distancia_hosp + 
+                          distancia_cole + distancia_cc + distancia_rest + distancia_libreria + 
+                          distancia_uni + distancia_banco + dist_avenida + property_type_2 + rooms_imp2 
+                        + bathrooms_imp2 + bedrooms_imp2 + surface_total_imp_mean2 + surface_covered_imp_mean2 
+                        + surface_total_median2 + surface_covered_median2 + abiert + acab + acces + alcob + 
+                          ampli + are + ascensor + balcon + ban + bao + baos + bbq + bogot + buen + centr +
+                          cerc + cerr + chimene + closet + cocin + comedor + comercial + comunal + cuart + 
+                          cuatr + cubiert + cuent + deposit + dos + edifici + espaci + estudi + excelent + 
+                          exterior + garaj + gas + gimnasi + habit + habitacion + hermos + ilumin + independient + 
+                          integral + interior + lavanderi + lind + mader + mts + natural + parqu + parqueader + pis +
+                          principal + priv + remodel + rop + sal + salon + sector + segur + servici + social + terraz + 
+                          tres + ubicacion + uno + vias + vigil + visit + vist + zon + PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + 
+                          PC7 + PC8 + PC9 + PC10 + PC11 + PC12 + PC13 + PC14 + PC15 + PC16 + PC17 + PC18 + PC19 + PC20 + 
+                          PC21 + PC22 + PC23 + PC24 + PC25 + PC26 + PC27 + PC28 + PC29 + PC30 + PC31 + PC32 + PC33 + PC34 + 
+                          PC35 + PC36 + PC37 + PC38 + PC39 + PC40 + PC41 + PC42 + PC43 + PC44 + PC45 + PC46 + PC47 + PC48 + 
+                          PC49 + PC50 + PC51 + PC52 + PC53 + PC54 + PC55 + PC56 + PC57 + PC58 + PC59 + PC60 + PC61 + PC62 + 
+                          PC63 + PC64 + PC65 + PC66 + PC67 + PC68 + PC69 + PC70 + PC71 + property_type_2_Apartamento + 
+                          property_type_2_Casa + n_pisos_numerico + piso_numerico + surface_covered_imp_mean2^2 + rooms_imp2^2 +
+                          surface_total_imp_mean2^2,
+                          data=train_full_dummys[-1], #excluye variable de property_id
+                          method = "xgbTree",
+                          trControl = fitControl,
+                          tuneGrid=grid_xbgoost)        
+
+
+# Obtener los mejores hiperparámetros
+best_hyperparameters <- XGBoost_model8$bestTune
+print(best_hyperparameters)
+
+# Resumen del modelo
+summary(XGBoost_model8)
+
+train_XGBoost_model8 <- train_full_dummys %>% 
+  mutate(price_pred = predict(XGBoost_model8, newdata = train_full_dummys))  
+yardstick::mae(train_XGBoost_model8, truth = price, estimate = price_pred) #predicción en train: mae = 100712716
+
+
+Predic_XGBoost_model8 <- test_full_dummys %>%
+  mutate(price = predict(XGBoost_model8, newdata = test_full_dummys)) %>% 
+  select(property_id,price) 
+
+write.csv(Predic_XGBoost_model8,"XGBoost_model8_ale.csv",row.names = F) 
+#Puntaje Kaggle: 248837015.95089
+
+## Graficas relevantes ##
+
+# Extraer el modelo xgboost entrenado
+xgb_model <- XGBoost_model8$finalModel
+
+# Calcular las predicciones en el conjunto de entrenamiento
+train_full_dummys <- train_full_dummys %>% 
+  mutate(price_pred = predict(XGBoost_model8, newdata = train_full_dummys))
+
+# Gráfica de Dispersión de Predicciones vs Valores Reales
+ggplot(train_full_dummys, aes(x = price, y = price_pred)) +
+  geom_point(alpha = 0.5) +
+  geom_abline(slope = 1, intercept = 0, color = "red") +
+  ggtitle("Predicciones vs Valores Reales") +
+  xlab("Valores Reales") +
+  ylab("Predicciones") +
+  theme_minimal()
+
+# Obtener los resultados de la validación cruzada
+cv_results <- XGBoost_model8$resample
+
+# Graficar el rendimiento en validación cruzada (MAE para cada fold) con líneas de color azul claro
+ggplot(cv_results, aes(x = Resample, y = MAE)) +
+  geom_boxplot(color = "cadetblue3", fill = "cadetblue3", alpha = 0.5) +
+  geom_jitter(width = 0.2, alpha = 0.5) +
+  ggtitle("MAE en cada fold de validación cruzada") +
+  xlab("Fold de Validación") +
+  ylab("MAE") +
+  theme_minimal()
+
+
+# Convertir los datos a un objeto sf (simple features)
+train_sf <- st_as_sf(train_full_dummys, coords = c("lon", "lat"), crs = 4326)
+
+set.seed(86936)
+block_folds <- spatial_block_cv(train_sf, v = 5)
+autoplot(block_folds)
