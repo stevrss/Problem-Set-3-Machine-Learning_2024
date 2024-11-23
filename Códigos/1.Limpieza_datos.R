@@ -1495,6 +1495,17 @@
     ) %>%
     ungroup()
   
+  
+#--------------------------------------------------------#
+  
+  
+  # Establecer el directorio de trabajo para los datos espaciales de barrios
+  setwd(paste0(wd, "\\Datos espaciales\\Manzanas")) #Directorio datos
+  
+  # Leer el archivo GeoJSON con información de los barrios y cargarlo como objeto espacial
+  manzanas <- st_read("MANZ.geojson")
+  
+  
 #------------------------------------------------------------------------------#
 #  Quitar variables que no son de interes
 #------------------------------------------------------------------------------#  
