@@ -33,6 +33,7 @@ p_load(
   readr,         # Lectura eficiente de archivos planos como CSV y TSV.
   skimr,         # Proporciona resúmenes detallados y rápidos de los datos (estadísticas descriptivas).
   stargazer,     # Produce tablas de resultados en formato LaTeX, texto y HTML para informes reproducibles.
+  dummies,
   
   # ---------------------- Manejo de datos espaciales ----------------------
   sf,            # Manejo y análisis de datos espaciales en formato 'sf' (e.g., shapefiles, GeoJSON).
