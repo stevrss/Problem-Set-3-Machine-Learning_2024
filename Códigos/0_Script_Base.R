@@ -3,7 +3,15 @@
 #------------------------------------------------------------------------------#
 
 # El presente codigo permite:
-# 1: Cambiar el directorio entre cada uno de los colaboradores del proyecto 3
+
+# 1: Prepara el entorno y argar los paquetes necesarios para el desarrollo del taller
+# 2: Cambiar el directorio entre cada uno de los colaboradores del proyecto 3
+
+
+#------------------------------------------------------------------------------#
+# 1: Prepara el entorno y argar los paquetes necesarios para el desarrollo del taller
+#------------------------------------------------------------------------------#
+
 
 # Limpia toda la memoria del entorno de trabajo para evitar conflictos con variables previas.
 rm(list = ls())
@@ -57,7 +65,9 @@ p_load(
 )
 
 
-# 1. Definicion del directorio -------------------------------------------------
+#------------------------------------------------------------------------------#
+# 2: Definir directorios
+#------------------------------------------------------------------------------#
 
 ifelse(grepl("Usuario", getwd()), # Julieth1
        wd <- "C:\\Users\\Usuario\\OneDrive - Universidad de los andes\\Documentos\\GitHub\\Problem-Set-3-Machine-Learning_2024",
