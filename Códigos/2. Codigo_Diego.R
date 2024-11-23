@@ -132,12 +132,26 @@ train_full_dummys <- train_full_dummys[c(colnames(test_full_dummys),"price")]
 #Quitamos el segundo price de la train full dummys
 train_full_dummys$price.1=NULL
 
-#- 4.8 | Modelo Boosting 8 sin tantas variables ----------------------------------------
+colnames(train_full_dummys) <- make.names(colnames(train_full_dummys))
+colnames(test_full_dummys) <- make.names(colnames(test_full_dummys))
 
-fitControl <- trainControl(method ="cv",number=5)
+#- 3.1  ----------------------------------------
+
+maeSummary <- function(data, lev = NULL, model = NULL) {
+  out <- mean(abs(data$obs - data$pred)) # Calcula el MAE
+  names(out) <- "MAE"                   # Nombra la métrica
+  return(out)
+}
+
+fitControl <- trainControl(
+  method = "cv",             # Validación cruzada
+  number = 5,                # Número de particiones
+  verboseIter = TRUE,        # Muestra progreso
+  summaryFunction = maeSummary # Usa la función MAE personalizada
+)
 
 #Cargamos los parámetros del boosting
-grid_xbgoost <- expand.grid(nrounds = c(500),
+grid_xbgoost <- expand.grid(nrounds = c(100),
                             max_depth = c(4), 
                             eta = c(0.25,0.5), 
                             gamma = c(0), 
@@ -145,15 +159,15 @@ grid_xbgoost <- expand.grid(nrounds = c(500),
                             colsample_bytree = c(0.33,0.66),
                             subsample = c(0.4))
 
+set.seed(1536)
 
-#xgboost sin tantas variables y componentes principales
-set.seed(1702)
-XGBoost_model8 <- train(price ~ distancia_parque + area_parque + distancia_policia + distancia_gym +
+library(caret)
+XGBoost_model_1 <- caret::train(price ~ distancia_parque + area_parque + distancia_policia + distancia_gym +
                           distancia_bus + distancia_super + distancia_bar + distancia_hosp + 
                           distancia_cole + distancia_cc + distancia_rest + distancia_libreria + 
-                          distancia_uni + distancia_banco + dist_avenida + property_type_2 + rooms_imp2 
-                        + bathrooms_imp2 + bedrooms_imp2 + surface_total_imp_mean2 + surface_covered_imp_mean2 
-                        + surface_total_median2 + surface_covered_median2 + abiert + acab + acces + alcob + 
+                          distancia_uni + distancia_banco + dist_avenida + property_type_2 + rooms_imp2 +
+                          bathrooms_imp2 + bedrooms_imp2 + surface_total_imp_mean2 + surface_covered_imp_mean2 +
+                          surface_total_median2 + surface_covered_median2 + abiert + acab + acces + alcob + 
                           ampli + are + ascensor + balcon + ban + bao + baos + bbq + bogot + buen + centr +
                           cerc + cerr + chimene + closet + cocin + comedor + comercial + comunal + cuart + 
                           cuatr + cubiert + cuent + deposit + dos + edifici + espaci + estudi + excelent + 
@@ -171,11 +185,11 @@ XGBoost_model8 <- train(price ~ distancia_parque + area_parque + distancia_polic
                           data=train_full_dummys[-1], #excluye variable de property_id
                           method = "xgbTree",
                           trControl = fitControl,
+                          metric = "MAE", # Indica que la métrica objetivo es MAE
                           tuneGrid=grid_xbgoost)        
 
-
 # Obtener los mejores hiperparámetros
-best_hyperparameters <- XGBoost_model8$bestTune
+best_hyperparameters <- XGBoost_model_1$bestTune
 print(best_hyperparameters)
 
 # Resumen del modelo
