@@ -103,7 +103,7 @@
     #Forma 1
   vis_dat(test) +
     scale_fill_manual(
-      name = "Tipo de dato", # Cambiar el nombre de la leyenda aquí
+      name = "Tipo de dato", # Cambiar el nombre de la leyenda aqui
       values = c(
         "character" = "#B0C4DE", # Azul claro
         "integer" = "#87CEEB",  # Azul cielo
@@ -114,7 +114,7 @@
     #Forma 2
   vis_dat(test) +
     scale_fill_manual(
-      name = "Tipo de dato", # Cambiar el nombre de la leyenda aquí
+      name = "Tipo de dato", # Cambiar el nombre de la leyenda aqui
       values = c(
       "character" = "#B0C4DE", # Azul claro
       "integer" = "#87CEEB",  # Azul cielo
@@ -206,9 +206,9 @@
     ) %>%
     ungroup()
   
-  ## Imputación media y mediana por tipo de propiedad de las variables: surface_total y surface_covered
+  ## Imputacion media y mediana por tipo de propiedad de las variables: surface_total y surface_covered
   
-    # Imputación media
+    # Imputacion media
   test <- test %>% 
     group_by(property_type) %>% 
     mutate(
@@ -217,7 +217,7 @@
     ) %>%
     ungroup()
   
-    # Imputación mediana
+    # Imputacion mediana
   test <- test %>% 
     group_by(property_type) %>% 
     mutate(
@@ -259,7 +259,7 @@
   summary(train$precio_mt2)
   stargazer(train["precio_mt2"],type="text")
   
-  # estadísticas descriptivas 
+  # estadisticas descriptivas 
   stargazer(train)
   stargazer(train,type="text")
   
@@ -285,7 +285,7 @@
   
    #Densidad
   hist((train$price / 1000000), probability = TRUE, col = '#A6CFE2', border = "grey30", breaks = 25, 
-       xlab = "Precio (millones)", main = "Distribución del Precio (en millones)")
+       xlab = "Precio (millones)", main = "Distribucion del Precio (en millones)")
   abline(v = mean((train$price / 1000000)), col = 'red', lwd = 3, lty = 2)
   lines(density((train$price / 1000000)), col = '#00008B', lwd = 3)
   legend("topright", legend = c("Media", "Densidad"), col = c("red", "#00008B"), lty = c(2, 1), lwd = 3, bty = "n")
@@ -308,19 +308,19 @@
 # 7. Datos espaciales ----------------------------------------------------------
 #-------------------------------------------------------------------------------   
   
-  # Eliminamos las observaciones que no tienen información de latitud o longitud
+  # Eliminamos las observaciones que no tienen informacion de latitud o longitud
   train <- train %>%
     filter(!is.na(lat) & !is.na(lon))
   dim(train)
   
   
 # Verificar la cantidad de valores NA en lon y lat (No hay NA)
-    sum(is.na(train$lon))  # Número de NA en la columna lon
-    sum(is.na(train$lat))  # Número de NA en la columna lat
+    sum(is.na(train$lon))  # Numero de NA en la columna lon
+    sum(is.na(train$lat))  # Numero de NA en la columna lat
   
-# Observamos la primera visualización
+# Observamos la primera visualizacion
     
-  ##. primera visualización de datos (train)
+  ##. primera visualizacion de datos (train)
     
     leaflet() %>% #Mirar mapa
       addTiles() %>%
@@ -328,7 +328,7 @@
                  lat = train$lat) #Latitud
     names(train)
     
-  ##. primera visualización de datos (test)
+  ##. primera visualizacion de datos (test)
     leaflet() %>%
       addTiles() %>%
       addCircles(lng = test$lon, 
