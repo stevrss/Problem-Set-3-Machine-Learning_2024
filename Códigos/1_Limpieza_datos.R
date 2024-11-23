@@ -10,13 +10,13 @@
 
   ### Base de datos de entrenamiento
 
-  train <- import("train.csv") 
+  train <- read.csv("train.csv") 
   length(train) # 16 variables 
   nrow(train) #38.644 observaciones   
   
   ### Base de datos de testeo
   
-  test <- import("test.csv") # Base de testeo
+  test <- read.csv("test.csv") # Base de testeo
   length(test) # 16 variables 
   nrow(test) #10.286 observaciones   
   
