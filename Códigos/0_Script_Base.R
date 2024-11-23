@@ -48,6 +48,7 @@ p_load(
   gbm,           # Máquinas de boosting (gradient boosting) basadas en árboles de decisión.
   SuperLearner,  # Combina múltiples algoritmos de aprendizaje automático para mejorar la predicción.
   tm,
+  stopwords,
   
   # --------------------------- Redes neuronales --------------------------------
   nnet,          # Redes neuronales simples de una capa (útil para regresión/clasificación básica).
