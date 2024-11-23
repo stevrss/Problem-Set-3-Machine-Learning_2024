@@ -37,6 +37,7 @@ p_load(
   xgboost,       # Algoritmo de gradient boosting optimizado para tareas de clasificacion y regresion
   gbm,           # Modelado de boosting basado en arboles de decision (Gradient Boosting Machines)
   SuperLearner,   # Meta-modelo para combinar múltiples algoritmos de machine learning y mejorar la predicción
+  tm,
   
   #Redes neuronales
   nnet,   # redes neuronales de una sola capa
