@@ -47,6 +47,7 @@ p_load(
   xgboost,       # Algoritmo avanzado para clasificación y regresión basado en gradient boosting.
   gbm,           # Máquinas de boosting (gradient boosting) basadas en árboles de decisión.
   SuperLearner,  # Combina múltiples algoritmos de aprendizaje automático para mejorar la predicción.
+  tm,
   
   # --------------------------- Redes neuronales --------------------------------
   nnet,          # Redes neuronales simples de una capa (útil para regresión/clasificación básica).
