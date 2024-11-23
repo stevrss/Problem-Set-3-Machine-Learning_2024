@@ -2,8 +2,8 @@
 #----------------------------- Pruebas - Diego  -------------------------------#
 #------------------------------------------------------------------------------#
 
-wd <- "C:\\Users\\HP\\OneDrive - Universidad Nacional de Colombia\\Documentos\\Diego\\PEG\\2024-2\\Machine learning\\Repositorios\\Problem-Set-3-Machine-Learning_2024\\Bases"
-setwd(wd)
+wd <- "C:\\Users\\HP\\OneDrive - Universidad Nacional de Colombia\\Documentos\\Diego\\PEG\\2024-2\\Machine learning\\Repositorios\\Problem-Set-3-Machine-Learning_2024"
+setwd(paste0(wd,"\\Bases"))
 
 # 1. Cargue base de datos ------------------------------------------------------
 Train <- readRDS("train.rds")
@@ -151,10 +151,10 @@ fitControl <- trainControl(
 )
 
 #Cargamos los parámetros del boosting
-grid_xbgoost <- expand.grid(nrounds = c(100),
+grid_xbgoost <- expand.grid(nrounds = c(500),
                             max_depth = c(4), 
                             eta = c(0.25,0.5), 
-                            gamma = c(0), 
+                            gamma = c(0,0.5), 
                             min_child_weight = c(50),
                             colsample_bytree = c(0.33,0.66),
                             subsample = c(0.4))
@@ -193,54 +193,24 @@ best_hyperparameters <- XGBoost_model_1$bestTune
 print(best_hyperparameters)
 
 # Resumen del modelo
-summary(XGBoost_model8)
+summary(XGBoost_model_1)
 
-train_XGBoost_model8 <- train_full_dummys %>% 
-  mutate(price_pred = predict(XGBoost_model8, newdata = train_full_dummys))  
-yardstick::mae(train_XGBoost_model8, truth = price, estimate = price_pred) #predicción en train: mae = 100712716
+# Resultado
+print(XGBoost_model_1$bestTune)
 
+# Prediccion
+train_XGBoost_model_1 <- train_full_dummys %>% 
+  mutate(price_pred = predict(XGBoost_model_1, newdata = train_full_dummys))  
 
-Predic_XGBoost_model8 <- test_full_dummys %>%
-  mutate(price = predict(XGBoost_model8, newdata = test_full_dummys)) %>% 
+mae_value <- mean(abs(train_XGBoost_model_1$price - train_XGBoost_model_1$price_pred))
+print(mae_value)  # 97355046
+
+# Prediccion en test
+test_XGBoost_model_1 <- test_full_dummys %>%
+  mutate(price = predict(XGBoost_model_1, newdata = test_full_dummys)) %>% 
   select(property_id,price) 
 
-write.csv(Predic_XGBoost_model8,"XGBoost_model8_ale.csv",row.names = F) 
+# Guardar prediccion
+setwd(paste0(wd,"\\Resultados\\XGboost"))
+write.csv(test_XGBoost_model_1,"XGBoost_model1_Diego.csv",row.names = F) 
 #Puntaje Kaggle: 248837015.95089
-
-## Graficas relevantes ##
-
-# Extraer el modelo xgboost entrenado
-xgb_model <- XGBoost_model8$finalModel
-
-# Calcular las predicciones en el conjunto de entrenamiento
-train_full_dummys <- train_full_dummys %>% 
-  mutate(price_pred = predict(XGBoost_model8, newdata = train_full_dummys))
-
-# Gráfica de Dispersión de Predicciones vs Valores Reales
-ggplot(train_full_dummys, aes(x = price, y = price_pred)) +
-  geom_point(alpha = 0.5) +
-  geom_abline(slope = 1, intercept = 0, color = "red") +
-  ggtitle("Predicciones vs Valores Reales") +
-  xlab("Valores Reales") +
-  ylab("Predicciones") +
-  theme_minimal()
-
-# Obtener los resultados de la validación cruzada
-cv_results <- XGBoost_model8$resample
-
-# Graficar el rendimiento en validación cruzada (MAE para cada fold) con líneas de color azul claro
-ggplot(cv_results, aes(x = Resample, y = MAE)) +
-  geom_boxplot(color = "cadetblue3", fill = "cadetblue3", alpha = 0.5) +
-  geom_jitter(width = 0.2, alpha = 0.5) +
-  ggtitle("MAE en cada fold de validación cruzada") +
-  xlab("Fold de Validación") +
-  ylab("MAE") +
-  theme_minimal()
-
-
-# Convertir los datos a un objeto sf (simple features)
-train_sf <- st_as_sf(train_full_dummys, coords = c("lon", "lat"), crs = 4326)
-
-set.seed(86936)
-block_folds <- spatial_block_cv(train_sf, v = 5)
-autoplot(block_folds)
