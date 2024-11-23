@@ -385,7 +385,7 @@
   sf_train<- st_as_sf(train, coords = c("lon", "lat"),  crs = 4626)
   sf_test<- st_as_sf(test, coords = c("lon", "lat"),  crs = 4626)
 
-  # Realizar la unión espacial basada en la proximidad de coordenadas
+  # Realizar la union espacial basada en la proximidad de coordenadas
   
     #Base train
   sf_train <- st_join(sf_train, local, join = st_intersects)
@@ -499,12 +499,12 @@
  
  #Sacar informacion espacial de Bogota
   
-  # Posibles categorías de las que podemos extraer información geosespacial. 
+  # Posibles categorias de las que podemos extraer informacion geosespacial. 
   print(available_tags("leisure"))
   print(available_features()) # para ver todas las categorias
 
   #Informacion espacial de Bogots
-  bogota<-opq(bbox = getbb("Bogotá Colombia"))
+  bogota<-opq(bbox = getbb("Bogot� Colombia"))
   bogota
   
 #Informacion especifica a extraer
@@ -513,8 +513,8 @@
 #      Parques
 #--------------------#
   
-    # Extraemos la info de todos los parques de Cali
-    parques <- opq(bbox = getbb("Bogotá Colombia")) %>%
+    # Extraemos la info de todos los parques
+    parques <- opq(bbox = getbb("Bogot� Colombia")) %>%
       add_osm_feature(key = "leisure" , value = "park") 
   
     # Cambiamos el formato para que sea un objeto sf (simple features)
