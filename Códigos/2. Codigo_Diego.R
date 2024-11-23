@@ -21,6 +21,12 @@ test <- Test %>%
 
 # 2. Arreglo de datos ----------------------------------------------------------
 
+# Calcular la moda (el valor más frecuente) de la columna localidad
+localidad_moda <- as.character(names(sort(table(test$localidad), decreasing = TRUE)[1]))
+
+# Reemplazar los valores NA con la moda
+test$localidad[is.na(test$localidad)] <- localidad_moda
+
 # Se guardan las descripciones en un vector source
 descriptions_train <- train$description
 des_train_scource <- VectorSource(descriptions_train)
@@ -118,6 +124,7 @@ test_full<-  test %>%
 
 ## Creamos una data full con las dummys 
 # Crear dummys train
+library(dummy)
 dummys <- dummy(subset(train_full, select = c(property_type_2,localidad)))
 dummys <- as.data.frame(apply(dummys,2,function(x){as.numeric(x)}))
 train_full_dummys <- cbind(subset(train_full, select = -c(property_type, localidad)),dummys)
@@ -134,6 +141,8 @@ train_full_dummys$price.1=NULL
 
 colnames(train_full_dummys) <- make.names(colnames(train_full_dummys))
 colnames(test_full_dummys) <- make.names(colnames(test_full_dummys))
+
+train_full_dummys <- train_full_dummys[!is.na(train_full_dummys$localidad_CHAPINERO), ]
 
 # 3.1 XGboost 1 ----------------------------------------------------------------
 
@@ -155,7 +164,7 @@ grid_xbgoost <- expand.grid(nrounds = c(500),
                             max_depth = c(4), 
                             eta = c(0.25,0.5), 
                             gamma = c(0,0.5), 
-                            min_child_weight = c(50),
+                            min_child_weight = c(30,50),
                             colsample_bytree = c(0.33,0.66),
                             subsample = c(0.4))
 
@@ -205,7 +214,7 @@ train_XGBoost_model_1 <- train_full_dummys %>%
   mutate(price_pred = predict(XGBoost_model_1, newdata = train_full_dummys))  
 
 mae_value <- mean(abs(train_XGBoost_model_1$price - train_XGBoost_model_1$price_pred))
-print(mae_value)  # 97355046
+print(mae_value)  # 94751384
 
 # Prediccion en test
 test_XGBoost_model_1 <- test_full_dummys %>%
