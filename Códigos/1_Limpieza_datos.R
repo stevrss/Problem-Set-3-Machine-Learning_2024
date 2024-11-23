@@ -562,18 +562,18 @@
   #Distribucion de la distancia alos pagues
    p <- ggplot(train%>%sample_n(1000), aes(x = distancia_parque, y = price)) +
      geom_point(col = "darkblue", alpha = 0.4) +
-     labs(x = "Distancia mínima a un parque en metros (log-scale)", 
+     labs(x = "Distancia minima a un parque en metros (log-scale)", 
           y = "Valor de venta  (log-scale)",
-          title = "Relación entre la proximidad a un parque y el precio del immueble") +
+          title = "Relacion entre la proximidad a un parque y el precio del immueble") +
      scale_x_log10() +
      scale_y_log10(labels = scales::dollar) +
      theme_bw()
    ggplotly(p)
   
   
-  # Ahora vamos a evaluar si el tamaño del parque más cercano influye
+  # Ahora vamos a evaluar si el tamanio del parque mas cercano influye
   posicion <- apply(dist_matrix, 1, function(x) which(min(x) == x))
-  # De la geometría de los parques extraemos el área
+  # De la geometria de los parques extraemos el area
   areas <- st_area(parques_geometria)
   #Agregamos la variable a nuestra base de datos original
   train <- train %>%
