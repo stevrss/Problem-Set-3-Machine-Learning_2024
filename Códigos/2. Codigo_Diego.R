@@ -118,12 +118,12 @@ test_full<-  test %>%
 
 ## Creamos una data full con las dummys 
 # Crear dummys train
-dummys <- dummy(subset(train_full, select = c(property_type_2)))
+dummys <- dummy(subset(train_full, select = c(property_type_2,localidad)))
 dummys <- as.data.frame(apply(dummys,2,function(x){as.numeric(x)}))
 train_full_dummys <- cbind(subset(train_full, select = -c(property_type, localidad)),dummys)
 
 #crear dummys test
-dummys <- dummy(subset(test_full, select = c(property_type_2)))
+dummys <- dummy(subset(test_full, select = c(property_type_2,localidad)))
 dummys <- as.data.frame(apply(dummys,2,function(x){as.numeric(x)}))
 test_full_dummys <- cbind(subset(test_full, select = -c(property_type, localidad)),dummys)
 
@@ -135,7 +135,7 @@ train_full_dummys$price.1=NULL
 colnames(train_full_dummys) <- make.names(colnames(train_full_dummys))
 colnames(test_full_dummys) <- make.names(colnames(test_full_dummys))
 
-#- 3.1  ----------------------------------------
+# 3.1 XGboost 1 ----------------------------------------------------------------
 
 maeSummary <- function(data, lev = NULL, model = NULL) {
   out <- mean(abs(data$obs - data$pred)) # Calcula el MAE
@@ -181,7 +181,9 @@ XGBoost_model_1 <- caret::train(price ~ distancia_parque + area_parque + distanc
                           PC49 + PC50 + PC51 + PC52 + PC53 + PC54 + PC55 + PC56 + PC57 + PC58 + PC59 + PC60 + PC61 + PC62 + 
                           PC63 + PC64 + PC65 + PC66 + PC67 + PC68 + PC69 + PC70 + PC71 + property_type_2_Apartamento + 
                           property_type_2_Casa + n_pisos_numerico + piso_numerico + surface_covered_imp_mean2^2 + rooms_imp2^2 +
-                          surface_total_imp_mean2^2,
+                          surface_total_imp_mean2^2+localidad_BARRIOS.UNIDOS + localidad_CANDELARIA + localidad_CHAPINERO +
+                          localidad_ENGATIVA + localidad_LOS.MARTIRES + localidad_SAN.CRISTOBAL + localidad_SANTA.FE + localidad_SUBA + 
+                          localidad_TEUSAQUILLO + localidad_USAQUEN,
                           data=train_full_dummys[-1], #excluye variable de property_id
                           method = "xgbTree",
                           trControl = fitControl,
@@ -212,5 +214,27 @@ test_XGBoost_model_1 <- test_full_dummys %>%
 
 # Guardar prediccion
 setwd(paste0(wd,"\\Resultados\\XGboost"))
-write.csv(test_XGBoost_model_1,"XGBoost_model1_Diego.csv",row.names = F) 
-#Puntaje Kaggle: 248837015.95089
+write.csv(test_XGBoost_model_1,"XGBoost_model1_nr500_maxd4_eta0.25_col0.66_min50_sub0.4.csv",row.names = F) 
+#Puntaje Kaggle: 306254365.58
+
+# 3.2  XGbosst 1 - Validacion cruzada espacial ---------------------------------
+Formula_1_XG = as.formula("price ~ distancia_parque + area_parque + distancia_policia + distancia_gym +
+                          distancia_bus + distancia_super + distancia_bar + distancia_hosp + 
+                          distancia_cole + distancia_cc + distancia_rest + distancia_libreria + 
+                          distancia_uni + distancia_banco + dist_avenida + property_type_2 + rooms_imp2 +
+                          bathrooms_imp2 + bedrooms_imp2 + surface_total_imp_mean2 + surface_covered_imp_mean2 +
+                          surface_total_median2 + surface_covered_median2 + abiert + acab + acces + alcob + 
+                          ampli + are + ascensor + balcon + ban + bao + baos + bbq + bogot + buen + centr +
+                          cerc + cerr + chimene + closet + cocin + comedor + comercial + comunal + cuart + 
+                          cuatr + cubiert + cuent + deposit + dos + edifici + espaci + estudi + excelent + 
+                          exterior + garaj + gas + gimnasi + habit + habitacion + hermos + ilumin + independient + 
+                          integral + interior + lavanderi + lind + mader + mts + natural + parqu + parqueader + pis +
+                          principal + priv + remodel + rop + sal + salon + sector + segur + servici + social + terraz + 
+                          tres + ubicacion + uno + vias + vigil + visit + vist + zon + PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + 
+                          PC7 + PC8 + PC9 + PC10 + PC11 + PC12 + PC13 + PC14 + PC15 + PC16 + PC17 + PC18 + PC19 + PC20 + 
+                          PC21 + PC22 + PC23 + PC24 + PC25 + PC26 + PC27 + PC28 + PC29 + PC30 + PC31 + PC32 + PC33 + PC34 + 
+                          PC35 + PC36 + PC37 + PC38 + PC39 + PC40 + PC41 + PC42 + PC43 + PC44 + PC45 + PC46 + PC47 + PC48 + 
+                          PC49 + PC50 + PC51 + PC52 + PC53 + PC54 + PC55 + PC56 + PC57 + PC58 + PC59 + PC60 + PC61 + PC62 + 
+                          PC63 + PC64 + PC65 + PC66 + PC67 + PC68 + PC69 + PC70 + PC71 + property_type_2_Apartamento + 
+                          property_type_2_Casa + n_pisos_numerico + piso_numerico + surface_covered_imp_mean2^2 + rooms_imp2^2 +
+                          surface_total_imp_mean2^2")
