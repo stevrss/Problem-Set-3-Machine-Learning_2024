@@ -222,6 +222,9 @@ XGBoost_model_1 <- caret::train(price ~ distancia_parque + area_parque + distanc
 best_hyperparameters <- XGBoost_model_1$bestTune
 print(best_hyperparameters)
 
+#nrounds max_depth  eta gamma colsample_bytree min_child_weight subsample
+# 500       6       0.05  0.1      0.66               25           0.8
+
 # Resumen del modelo
 summary(XGBoost_model_1)
 
@@ -233,14 +236,14 @@ train_XGBoost_model_1 <- train2 %>%
   mutate(price_pred = predict(XGBoost_model_1, newdata = train2))  
 
 mae_value_train <- mean(abs(train_XGBoost_model_1$price - train_XGBoost_model_1$price_pred))
-print(mae_value_train)  # 94118150
+print(mae_value_train)  # 89613366
 
 # Prediccion fuera de muestra 
 test_XGBoost_model_1 <- test2 %>% 
   mutate(price_pred = predict(XGBoost_model_1, newdata = test2))  
 
 mae_value_test <- mean(abs(test_XGBoost_model_1$price - test_XGBoost_model_1$price_pred))
-print(mae_value_test)  # 129702858
+print(mae_value_test)  # 117231096
 
 # Importancia de variables 
 p_load(DiagrammeR)
@@ -259,7 +262,7 @@ test_XGBoost_model_1 <- test_full_dummys %>%
 
 # Guardar prediccion
 setwd(paste0(wd,"\\Resultados\\XGboost"))
-write.csv(test_XGBoost_model_1,"XGBoost_model1_nr500_maxd4_eta0.25_col0.66_min50_sub0.4.csv",row.names = F) 
+write.csv(test_XGBoost_model_1,"XGBoost_model1_nr500_maxd6_eta0.05_g0.1_col0.66_min25_sub0.8.csv",row.names = F) 
 #Puntaje Kaggle: 260813751.28
 
 # 3.2  XGbosst 1 - Validacion cruzada espacial ---------------------------------
