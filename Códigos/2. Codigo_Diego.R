@@ -145,7 +145,26 @@ colnames(test_full_dummys) <- make.names(colnames(test_full_dummys))
 train_full_dummys <- train_full_dummys[!is.na(train_full_dummys$localidad_CHAPINERO), ]
 
 # Creamos dummy de zona g o t 
+train_full_dummys$zona_g <- ifelse(grepl("zona g ", train_full_dummys$description, ignore.case = TRUE), 1, 0)
+train_full_dummys$zona_t <- ifelse(grepl("zona t ", train_full_dummys$description, ignore.case = TRUE), 1, 0)
+train_full_dummys$zona_g_t <- ifelse(train_full_dummys$zona_g==1|train_full_dummys$zona_t==1, 1, 0)
 
+test_full_dummys$zona_g <- ifelse(grepl("zona g ", test_full_dummys$description, ignore.case = TRUE), 1, 0)
+test_full_dummys$zona_t <- ifelse(grepl("zona t ", test_full_dummys$description, ignore.case = TRUE), 1, 0)
+test_full_dummys$zona_g_t <- ifelse(test_full_dummys$zona_g==1|test_full_dummys$zona_t==1, 1, 0)
+
+# Se crea una muestra train y test 
+set.seed(1536) # Para reproducibilidad
+
+# Tamaño del conjunto de entrenamiento
+n_train <- floor(0.8 * nrow(train_full_dummys))  # 80% del tamaño total
+
+# Crear índices aleatorios para entrenamiento
+train_indices <- sample(seq_len(nrow(train_full_dummys)), size = n_train)
+
+# Dividir los datos
+train2 <- train_full_dummys[train_indices, ]  # Datos de entrenamiento
+test2 <-  train_full_dummys[-train_indices, ]  # Datos de prueba
 
 # 3.1 XGboost 1 ----------------------------------------------------------------
 
@@ -164,12 +183,12 @@ fitControl <- trainControl(
 
 #Cargamos los parámetros del boosting
 grid_xbgoost <- expand.grid(nrounds = c(500),
-                            max_depth = c(4), 
-                            eta = c(0.25), 
-                            gamma = c(0), 
-                            min_child_weight = c(50),
+                            max_depth = c(4,6), 
+                            eta = c(0,0.05), 
+                            gamma = c(0,0.1), 
+                            min_child_weight = c(25,50),
                             colsample_bytree = c(0.66),
-                            subsample = c(0.4))
+                            subsample = c(0.4,0.8))
 
 set.seed(1536)
 
@@ -177,9 +196,8 @@ library(caret)
 XGBoost_model_1 <- caret::train(price ~ distancia_parque + area_parque + distancia_policia + distancia_gym +
                           distancia_bus + distancia_super + distancia_bar + distancia_hosp + 
                           distancia_cole + distancia_cc + distancia_rest + distancia_libreria + 
-                          distancia_uni + distancia_banco + dist_avenida + property_type_2 + rooms_imp2 + bedrooms +
-                          bathrooms_imp2 +  surface_total_imp_mean2 + surface_covered_imp_mean2 +
-                          surface_total_median2 + surface_covered_median2 + abiert + acab + acces + alcob + 
+                          distancia_uni + distancia_banco + dist_avenida + rooms_imp2 + bedrooms + 
+                          bathrooms_imp2 + surface_total_median2 + surface_covered_median2 + abiert + acab + acces + alcob + 
                           ampli + are + ascensor + balcon + ban + bao + baos + bbq + bogot + buen + centr +
                           cerc + cerr + chimene + closet + cocin + comedor + comercial + comunal + cuart + 
                           cuatr + cubiert + cuent + deposit + dos + edifici + espaci + estudi + excelent + 
@@ -189,14 +207,12 @@ XGBoost_model_1 <- caret::train(price ~ distancia_parque + area_parque + distanc
                           tres + ubicacion + uno + vias + vigil + visit + vist + zon + PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + 
                           PC7 + PC8 + PC9 + PC10 + PC11 + PC12 + PC13 + PC14 + PC15 + PC16 + PC17 + PC18 + PC19 + PC20 + 
                           PC21 + PC22 + PC23 + PC24 + PC25 + PC26 + PC27 + PC28 + PC29 + PC30 + PC31 + PC32 + PC33 + PC34 + 
-                          PC35 + PC36 + PC37 + PC38 + PC39 + PC40 + PC41 + PC42 + PC43 + PC44 + PC45 + PC46 + PC47 + PC48 + 
-                          PC49 + PC50 + PC51 + PC52 + PC53 + PC54 + PC55 + PC56 + PC57 + PC58 + PC59 + PC60 + PC61 + PC62 + 
-                          PC63 + PC64 + PC65 + PC66 + PC67 + PC68 + PC69 + PC70 + PC71 + property_type_2_Apartamento + 
-                          property_type_2_Casa + n_pisos_numerico + piso_numerico + surface_covered_imp_mean2^2 + rooms_imp2^2 +
-                          surface_total_imp_mean2^2+localidad_BARRIOS.UNIDOS + localidad_CANDELARIA + localidad_CHAPINERO +
+                          PC35 + PC36 + PC37 + PC38 + PC39 + PC40 + PC41 + PC42 + property_type_2_Apartamento + 
+                          property_type_2_Casa + n_pisos_numerico + piso_numerico + surface_total_median2^2 + rooms_imp2^2 +
+                          surface_covered_median2^2+bedrooms^2+localidad_BARRIOS.UNIDOS + localidad_CANDELARIA + localidad_CHAPINERO +
                           localidad_ENGATIVA + localidad_PUENTE.ARANDA + localidad_SANTA.FE + localidad_SUBA + 
-                          localidad_TEUSAQUILLO + localidad_USAQUEN+estrato_imp,
-                          data=train_full_dummys[-1], #excluye variable de property_id
+                          localidad_TEUSAQUILLO + localidad_USAQUEN+estrato_imp +zona_g_t,
+                          data=train2[-1], #excluye variable de property_id
                           method = "xgbTree",
                           trControl = fitControl,
                           metric = "MAE", # Indica que la métrica objetivo es MAE
@@ -212,12 +228,29 @@ summary(XGBoost_model_1)
 # Resultado
 print(XGBoost_model_1$bestTune)
 
-# Prediccion
-train_XGBoost_model_1 <- train_full_dummys %>% 
-  mutate(price_pred = predict(XGBoost_model_1, newdata = train_full_dummys))  
+# Prediccion dentro de muestra 
+train_XGBoost_model_1 <- train2 %>% 
+  mutate(price_pred = predict(XGBoost_model_1, newdata = train2))  
 
-mae_value <- mean(abs(train_XGBoost_model_1$price - train_XGBoost_model_1$price_pred))
-print(mae_value)  # 94747496
+mae_value_train <- mean(abs(train_XGBoost_model_1$price - train_XGBoost_model_1$price_pred))
+print(mae_value_train)  # 94118150
+
+# Prediccion fuera de muestra 
+test_XGBoost_model_1 <- test2 %>% 
+  mutate(price_pred = predict(XGBoost_model_1, newdata = test2))  
+
+mae_value_test <- mean(abs(test_XGBoost_model_1$price - test_XGBoost_model_1$price_pred))
+print(mae_value_test)  # 129702858
+
+# Importancia de variables 
+p_load(DiagrammeR)
+tree_plot <- xgb.plot.tree(model = XGBoost_model_1$finalModel,
+                           trees = 1, plot_width = 1000, plot_height = 500)
+tree_plot
+
+# Importancia de iteraciones
+importance <- varImp(XGBoost_model_1, scale = FALSE)
+print(importance)
 
 # Prediccion en test
 test_XGBoost_model_1 <- test_full_dummys %>%
