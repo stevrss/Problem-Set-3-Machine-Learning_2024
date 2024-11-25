@@ -14,10 +14,10 @@ db_miss_test  <- skim(Test)%>% dplyr::select(skim_variable, n_missing)
 
 # 1.1. Variables de interes ----------------------------------------------------
 train <- Train %>% 
-  select(-surface_total, -surface_covered, -rooms, -bedrooms, -bathrooms)
+  select(-surface_total, -surface_covered, -rooms, -bathrooms)
 
 test <- Test %>% 
-  select(-surface_total, -surface_covered, -rooms, -bedrooms, -bathrooms)
+  select(-surface_total, -surface_covered, -rooms, -bathrooms)
 
 # 2. Arreglo de datos ----------------------------------------------------------
 
@@ -125,14 +125,14 @@ test_full<-  test %>%
 ## Creamos una data full con las dummys 
 # Crear dummys train
 library(dummy)
-dummys <- dummy(subset(train_full, select = c(property_type_2,localidad)))
-dummys <- as.data.frame(apply(dummys,2,function(x){as.numeric(x)}))
-train_full_dummys <- cbind(subset(train_full, select = -c(property_type, localidad)),dummys)
+dummys_train <- dummy(subset(train_full, select = c(property_type_2,localidad)))
+dummys_train <- as.data.frame(apply(dummys_train,2,function(x){as.numeric(x)}))
+train_full_dummys <- cbind(subset(train_full, select = -c(property_type, localidad)),dummys_train)
 
 #crear dummys test
-dummys <- dummy(subset(test_full, select = c(property_type_2,localidad)))
-dummys <- as.data.frame(apply(dummys,2,function(x){as.numeric(x)}))
-test_full_dummys <- cbind(subset(test_full, select = -c(property_type, localidad)),dummys)
+dummys_test <- dummy(subset(test_full, select = c(property_type_2,localidad)))
+dummys_test <- as.data.frame(apply(dummys_test,2,function(x){as.numeric(x)}))
+test_full_dummys <- cbind(subset(test_full, select = -c(property_type, localidad)),dummys_test)
 
 #dejar variables que comparten test y train despues de crear dummys
 train_full_dummys <- train_full_dummys[c(colnames(test_full_dummys),"price")]
@@ -143,6 +143,9 @@ colnames(train_full_dummys) <- make.names(colnames(train_full_dummys))
 colnames(test_full_dummys) <- make.names(colnames(test_full_dummys))
 
 train_full_dummys <- train_full_dummys[!is.na(train_full_dummys$localidad_CHAPINERO), ]
+
+# Creamos dummy de zona g o t 
+
 
 # 3.1 XGboost 1 ----------------------------------------------------------------
 
@@ -162,10 +165,10 @@ fitControl <- trainControl(
 #Cargamos los parámetros del boosting
 grid_xbgoost <- expand.grid(nrounds = c(500),
                             max_depth = c(4), 
-                            eta = c(0.25,0.5), 
-                            gamma = c(0,0.5), 
-                            min_child_weight = c(30,50),
-                            colsample_bytree = c(0.33,0.66),
+                            eta = c(0.25), 
+                            gamma = c(0), 
+                            min_child_weight = c(50),
+                            colsample_bytree = c(0.66),
                             subsample = c(0.4))
 
 set.seed(1536)
@@ -174,8 +177,8 @@ library(caret)
 XGBoost_model_1 <- caret::train(price ~ distancia_parque + area_parque + distancia_policia + distancia_gym +
                           distancia_bus + distancia_super + distancia_bar + distancia_hosp + 
                           distancia_cole + distancia_cc + distancia_rest + distancia_libreria + 
-                          distancia_uni + distancia_banco + dist_avenida + property_type_2 + rooms_imp2 +
-                          bathrooms_imp2 + bedrooms_imp2 + surface_total_imp_mean2 + surface_covered_imp_mean2 +
+                          distancia_uni + distancia_banco + dist_avenida + property_type_2 + rooms_imp2 + bedrooms +
+                          bathrooms_imp2 +  surface_total_imp_mean2 + surface_covered_imp_mean2 +
                           surface_total_median2 + surface_covered_median2 + abiert + acab + acces + alcob + 
                           ampli + are + ascensor + balcon + ban + bao + baos + bbq + bogot + buen + centr +
                           cerc + cerr + chimene + closet + cocin + comedor + comercial + comunal + cuart + 
@@ -191,8 +194,8 @@ XGBoost_model_1 <- caret::train(price ~ distancia_parque + area_parque + distanc
                           PC63 + PC64 + PC65 + PC66 + PC67 + PC68 + PC69 + PC70 + PC71 + property_type_2_Apartamento + 
                           property_type_2_Casa + n_pisos_numerico + piso_numerico + surface_covered_imp_mean2^2 + rooms_imp2^2 +
                           surface_total_imp_mean2^2+localidad_BARRIOS.UNIDOS + localidad_CANDELARIA + localidad_CHAPINERO +
-                          localidad_ENGATIVA + localidad_LOS.MARTIRES + localidad_SAN.CRISTOBAL + localidad_SANTA.FE + localidad_SUBA + 
-                          localidad_TEUSAQUILLO + localidad_USAQUEN,
+                          localidad_ENGATIVA + localidad_PUENTE.ARANDA + localidad_SANTA.FE + localidad_SUBA + 
+                          localidad_TEUSAQUILLO + localidad_USAQUEN+estrato_imp,
                           data=train_full_dummys[-1], #excluye variable de property_id
                           method = "xgbTree",
                           trControl = fitControl,
@@ -214,7 +217,7 @@ train_XGBoost_model_1 <- train_full_dummys %>%
   mutate(price_pred = predict(XGBoost_model_1, newdata = train_full_dummys))  
 
 mae_value <- mean(abs(train_XGBoost_model_1$price - train_XGBoost_model_1$price_pred))
-print(mae_value)  # 94751384
+print(mae_value)  # 94747496
 
 # Prediccion en test
 test_XGBoost_model_1 <- test_full_dummys %>%
@@ -224,7 +227,7 @@ test_XGBoost_model_1 <- test_full_dummys %>%
 # Guardar prediccion
 setwd(paste0(wd,"\\Resultados\\XGboost"))
 write.csv(test_XGBoost_model_1,"XGBoost_model1_nr500_maxd4_eta0.25_col0.66_min50_sub0.4.csv",row.names = F) 
-#Puntaje Kaggle: 306254365.58
+#Puntaje Kaggle: 260813751.28
 
 # 3.2  XGbosst 1 - Validacion cruzada espacial ---------------------------------
 Formula_1_XG = as.formula("price ~ distancia_parque + area_parque + distancia_policia + distancia_gym +
