@@ -263,7 +263,7 @@ test_XGBoost_model_1 <- test_full_dummys %>%
 # Guardar prediccion
 setwd(paste0(wd,"\\Resultados\\XGboost"))
 write.csv(test_XGBoost_model_1,"XGBoost_model1_nr500_maxd6_eta0.05_g0.1_col0.66_min25_sub0.8.csv",row.names = F) 
-#Puntaje Kaggle: 260813751.28
+#Puntaje Kaggle: 230537671.28
 
 # 3.2  XGbosst 1 - Validacion cruzada espacial ---------------------------------
 Formula_1_XG = as.formula("price ~ distancia_parque + area_parque + distancia_policia + distancia_gym +
