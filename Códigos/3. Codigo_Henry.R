@@ -130,6 +130,17 @@ test2 <-  train_full[-train_indices, ]  # Datos de prueba
 
 
 
+# Reemplazar NA en las demas variables categóricas por su moda
+property_type_2_moda <- as.character(names(sort(table(train2$property_type_2), decreasing = TRUE)[1]))
+train2$property_type_2[is.na(train2$property_type_2)] <- property_type_2_moda
+
+localidad_moda <- as.character(names(sort(table(train2$localidad), decreasing = TRUE)[1]))
+train2$localidad[is.na(train2$localidad)] <- localidad_moda
+
+barrio_moda <- as.character(names(sort(table(train2$barrio), decreasing = TRUE)[1]))
+train2$barrio[is.na(train2$barrio)] <- barrio_moda
+
+
 # Se especifica la metrica
 maeSummary <- function(data, lev = NULL, model = NULL) {
   out <- mean(abs(data$obs - data$pred)) # Calcula el MAE
@@ -138,13 +149,13 @@ maeSummary <- function(data, lev = NULL, model = NULL) {
 }
 
 
-
+#Definimos el modelo
 
 elastic_net_spec <- linear_reg(penalty = tune(), mixture = tune()) %>%
   set_engine("glmnet")
 
 # Se define la grilla
-grid_values <- grid_regular(penalty(range = c(-4,1)), levels = 50) %>%
+grid_values <- grid_regular(penalty(range = c(-4,2)), levels = 50) %>%
   expand_grid(mixture = seq(0, 1, by = 0.1))
 
 
@@ -235,8 +246,11 @@ best_tune_res2
 res1_final <- finalize_workflow(workflow_1, best_tune_res1)
 res2_final <- finalize_workflow(workflow_2, best_tune_res2)
 
-EN_final1_fit <- fit(res1_final, data = train)
-EN_final2_fit <- fit(res2_final, data = train)
+colSums(is.na(train2))
+
+
+EN_final1_fit <- fit(res1_final, data = train2)
+EN_final2_fit <- fit(res2_final, data = train2)
 
 #Prediccion
 augment(EN_final1_fit, new_data = test) %>%
@@ -246,19 +260,10 @@ augment(EN_final2_fit, new_data = test) %>%
   mae(truth = price, estimate = .pred)
 
 
+
+
+
 # Superlerner ------------------------------------------------------------------
-
-# Se crea una muestra train y test con referencia dek 80% del tamaÑO
-set.seed(1020)
-n_train <- floor(0.8 * nrow(train_full))  
-
-# Creamos los indices
-train_indices <- sample(seq_len(nrow(train_full)), size = n_train)
-
-# Dividimos los datos
-train2 <- train_full[train_indices, ]  # Datos de entrenamiento
-test2 <-  train_full[-train_indices, ]  # Datos de prueba
-
 
 
 # Se especifica la metrica
@@ -298,9 +303,9 @@ variables_relevantes <- c(
   "natural", "parqu", "parqueader", "pis", "principal", "priv", "remodel", "rop", "sal", 
   "salon", "sector", "segur", "servici", "social", "terraz", "tres", "ubicacion", "uno", 
   "vias", "vigil", "visit", "n_pisos_numerico", "zon", 
-  "property_type_2", "localidad", "barrio"
+  "property_type_2", "localidad"
 )
-categoricas <- c("property_type_2", "localidad", "barrio")  # Variables categóricas
+categoricas <- c("property_type_2", "localidad")  # Variables categóricas
 
 # Filtrar las variables relevantes
 train2_filtrado <- train2[, c("price", variables_relevantes)]
