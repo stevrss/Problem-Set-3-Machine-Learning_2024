@@ -2,14 +2,14 @@
 #------------------------ CODIGO BASE - PROBLEM SET 3 -------------------------#
 #------------------------------------------------------------------------------#
 
-# El presente codigo permite:
+# El presente código permite:
 
-# 1: Prepara el entorno y argar los paquetes necesarios para el desarrollo del taller
+# 1: Preparar el entorno y cargarlos paquetes necesarios para el desarrollo del taller
 # 2: Cambiar el directorio entre cada uno de los colaboradores del proyecto 3
 
 
 #------------------------------------------------------------------------------#
-# 1: Prepara el entorno y argar los paquetes necesarios para el desarrollo del taller
+# 1: Prepara el entorno y cargar los paquetes necesarios para el desarrollo del taller
 #------------------------------------------------------------------------------#
 
 
@@ -77,7 +77,7 @@ ifelse(grepl("Usuario", getwd()), # Julieth1
        ifelse(grepl("HP", getwd()), # Diego
               wd <- "C:\\Users\\HP\\OneDrive - Universidad Nacional de Colombia\\Documentos\\Diego\\PEG\\2024-2\\Machine learning\\Repositorios\\Problem-Set-3-Machine-Learning_2024",
               ifelse(grepl("hncar", getwd()),
-                     wd <- "C:\\Users\\hncar\\Documents\\GitHub\\Problem-Set-2_Machine-Learning_2024",
+                     wd <- "C:\\Users\\hncar\\Documents\\GitHub\\Problem-Set-3-Machine-Learning_2024",
                      ifelse(grepl("C:\\Users\\User", getwd()),  # Henry
                             wd <- "C:\\Users\\User\\OneDrive - Universidad de los Andes\\Big Data y Machine Learning\\Problem_set_1\\Problem_set_1",
                             ifelse(grepl("\\\\Users\\\\aleja\\\\", getwd()), 
