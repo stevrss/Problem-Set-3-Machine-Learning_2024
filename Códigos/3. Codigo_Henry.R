@@ -246,19 +246,28 @@ best_tune_res2
 res1_final <- finalize_workflow(workflow_1, best_tune_res1)
 res2_final <- finalize_workflow(workflow_2, best_tune_res2)
 
-colSums(is.na(train2))
-
 
 EN_final1_fit <- fit(res1_final, data = train2)
 EN_final2_fit <- fit(res2_final, data = train2)
 
-#Prediccion
-augment(EN_final1_fit, new_data = test) %>%
+# Prediccion dentro de muestra 
+augment(EN_final1_fit, new_data = test2) %>%
+  mae(truth = price, estimate = .pred)  # presenta un mejor MAE
+
+augment(EN_final2_fit, new_data = test2) %>%
   mae(truth = price, estimate = .pred)
 
-augment(EN_final2_fit, new_data = test) %>%
-  mae(truth = price, estimate = .pred)
 
+# Prediccion fuera de muestra 
+predic_EN_1 <- predict(EN_final1_fit, new_data = test_full)$.pred
+test_EN_1 <- test_full %>%
+  mutate(price = predic_EN_1) %>%
+  select(property_id, price)
+
+
+# Guardar prediccion
+setwd(paste0(wd,"\\Resultados\\EN_VCEspacial"))
+write.csv(test_EN_1,"EN_model1_lambda_0.0001_alpha_0.csv",row.names = F) 
 
 
 
