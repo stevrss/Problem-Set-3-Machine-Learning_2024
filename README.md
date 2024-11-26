@@ -12,3 +12,8 @@ Este repositorio contiene todos los recursos necesarios para resolver el tercer 
 En primer lugar, fuera de las carpetas principales, se encuentra el archivo PDF con el enunciado del ejercicio y las consideraciones para su resolución. Además, en cada carpeta se incluyen los archivos resultantes del proceso realizado para resolver el problema de clasificación de la pobreza.
 
 Respecto a las carpetas, contienen la siguiente información:
+
+* Base: Esta carpeta almacena las bases de datos procesada de las fuentes de informacion dispuestas en la plataforma Kaggle. Dichas bases son resultado del proceso de tratamiento, limpieza  y transformacion de los datos de entrenamiento y de prueba. Dichas bases constituyen el soporte principal para la realización de los modelos y las preducciones. En las subcarpetas están las bases de datos originales dispuestas en la plataforma Kaggle, las cuales fueron procesadas posteriormente.
+
+* Códigos: En esta carpeta están los scripts utilizados para generar los resultados. Dado que para solucionar el problema de clasificación fue necesario probar diferentes metodologías, en cada archivo se encuentran un proceso inicial de control de los datos junto con una especificación del modelo a utilizar.
+
