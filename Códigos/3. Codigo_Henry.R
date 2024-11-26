@@ -154,7 +154,7 @@ rec_1 <- recipe(
   distancia_super + distancia_bar + distancia_hosp + distancia_cole + distancia_cc +
   distancia_rest + distancia_libreria + distancia_uni + distancia_banco + dist_avenida +
   rooms_imp2 + bedrooms + bathrooms_imp2 + property_type_2 + localidad + barrio + n_pisos_numerico +
-  are + parqu + balcon + remodel + sector, data = train) %>%
+  are + parqu + balcon + remodel + sector, data = train2) %>%
   step_interact(terms = ~ distancia_parque:property_type_2 + area_parque:property_type_2) %>%  
   step_interact(terms = ~ distancia_parque:n_pisos_numerico) %>%  
   step_novel(all_nominal_predictors()) %>%   
@@ -169,7 +169,7 @@ rec_2 <- recipe(
   distancia_super + distancia_bar + distancia_hosp + distancia_cole + distancia_cc +
   distancia_rest + distancia_libreria + distancia_uni + distancia_banco + dist_avenida +
   rooms_imp2 + bedrooms + bathrooms_imp2 + property_type_2 + localidad + barrio + n_pisos_numerico +
-  are + parqu + balcon + remodel + sector, data = train) %>%
+  are + parqu + balcon + remodel + sector, data = train2) %>%
   step_interact(terms = ~ distancia_parque:property_type_2 + area_parque:property_type_2) %>%  
   step_interact(terms = ~ distancia_parque:n_pisos_numerico) %>%  
   step_poly(distancia_parque, area_parque, degree = 2) %>%  
@@ -191,7 +191,7 @@ workflow_2 <- workflow() %>%
 
 # definimos nuestra variable como sf
 train_sf <- st_as_sf(
-  train,
+  train2,
   coords = c("lon", "lat"),
   crs = 4326
 )
