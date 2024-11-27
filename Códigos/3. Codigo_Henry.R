@@ -487,3 +487,141 @@ test_RL_2 <- test_full %>%
 # Guardar prediccion
 setwd(paste0(wd,"\\Resultados\\RegLineal"))
 write.csv(test_RL_1,"RegLineal_model2.csv",row.names = F) 
+
+
+
+# Red Neuronal ------------------------------------------------------------
+
+# Se crea una muestra train y test con referencia dek 80% del tamaÑO
+set.seed(0987)
+n_train <- floor(0.8 * nrow(train_full))  
+
+# Creamos los indices
+train_indices <- sample(seq_len(nrow(train_full)), size = n_train)
+
+# Dividimos los datos
+train2 <- train_full[train_indices, ]  # Datos de entrenamiento
+test2 <-  train_full[-train_indices, ]  # Datos de prueba
+
+
+# Reemplazar NA en las demas variables categóricas por su moda
+
+#En train
+property_type_2_moda <- as.character(names(sort(table(train2$property_type_2), decreasing = TRUE)[1]))
+train2$property_type_2[is.na(train2$property_type_2)] <- property_type_2_moda
+
+localidad_moda <- as.character(names(sort(table(train2$localidad), decreasing = TRUE)[1]))
+train2$localidad[is.na(train2$localidad)] <- localidad_moda
+
+barrio_moda <- as.character(names(sort(table(train2$barrio), decreasing = TRUE)[1]))
+train2$barrio[is.na(train2$barrio)] <- barrio_moda
+
+#En test
+property_type_2_moda_test <- as.character(names(sort(table(test2$property_type_2), decreasing = TRUE)[1]))
+test2$property_type_2[is.na(test2$property_type_2)] <- property_type_2_moda_test
+
+localidad_moda_test <- as.character(names(sort(table(test2$localidad), decreasing = TRUE)[1]))
+test2$localidad[is.na(test2$localidad)] <- localidad_moda_test
+
+barrio_moda_test <- as.character(names(sort(table(test2$barrio), decreasing = TRUE)[1]))
+test2$barrio[is.na(test2$barrio)] <- barrio_moda_test
+
+
+# Aplicar logaritmo al precio
+train2$log_price <- log1p(train2$price)
+test2$log_price <- log1p(test2$price)
+
+#Formula
+formula_nnet <- as.formula(
+  "log_price ~ distancia_parque + area_parque + 
+                 distancia_policia + distancia_gym + distancia_bus +
+                 distancia_super + distancia_bar + distancia_hosp + distancia_cole + 
+                 distancia_cc + distancia_rest + distancia_libreria + distancia_uni + 
+                 distancia_banco + dist_avenida + rooms_imp2 + bedrooms + bathrooms_imp2 + 
+                 property_type_2 + localidad + n_pisos_numerico + are + parqu + balcon + 
+                 remodel + sector"
+)
+
+# Crear receta con interacciones
+recipe_nnet <- recipe(formula_nnet, data = train2) %>%
+  step_novel(all_nominal_predictors()) %>%          # Maneja clases no vistas
+  step_dummy(all_nominal_predictors()) %>%         # Crear variables dummy
+  step_zv(all_predictors()) %>%                    # Eliminar varianza cero
+  step_normalize(all_numeric_predictors())    # Normalizar predictores
+
+
+
+#Se define la validación cruzada espacial 
+train_sf_nnet <- st_as_sf(
+  train2, 
+  coords = c("lon", "lat"),
+  crs = 4326
+)
+
+set.seed(86936)
+block_folds <- spatial_block_cv(train_sf_nnet, v = 5)
+
+#Se define el modelo y la grilla
+nnet_tune <- 
+  mlp(hidden_units =tune(), epochs = tune(), penalty =tune() ) %>% 
+  set_mode("regression") %>% 
+  set_engine("nnet", trace = 0) %>%
+  translate()
+
+grid_values <- crossing( 
+  hidden_units = seq(from= 10, to=30, by = 10),
+  epochs =  seq(from= 100, to=200, by = 100),
+  penalty = 10^seq(from=-3,to=-1, by=0.5 )
+)
+
+# Establecemos el flujo de trabajo
+workflow_tune <- workflow() %>% 
+  add_recipe(recipe_nnet) %>%
+  add_model(nnet_tune) 
+
+# Se realiza la validación cruzada espacial
+set.seed(87436)
+
+tune_nnet <- tune_grid(
+  workflow_tune,        
+  resamples = block_folds,
+  grid = grid_values,        
+  metrics = metric_set(mae)  # métrica MAE
+)
+
+#Se escogen las mejores metricas
+best_tune_nnet <- select_best(tune_nnet, metric = "mae")
+best_tune_nnet
+
+# Finalizar el flujo de trabajo 'workflow' con el mejor valor de parámetros
+nnet_tuned_final <- finalize_workflow(workflow_tune, best_tune_nnet)
+nnet_tuned_final_fit <- fit(nnet_tuned_final, data = train2)
+
+# Evaluación en el test
+test_predictions <- augment(nnet_tuned_final_fit, new_data = test2) %>%
+  mutate(price_pred = expm1(.pred))  # Devolver al valor original
+
+# Calcular MAE
+mae_result <- mae(
+  data = test_predictions,
+  truth = price,  # Variable objetivo transformada
+  estimate = .pred    # Predicciones
+)
+mae_result
+
+
+# Prediccion fuera de muestra 
+predic_nnet_1 <- predict(nnet_tuned_final_fit, new_data = test_full) %>%
+  mutate(price_pred = expm1(.pred)) # Devolver al valor original
+test_nnet_1 <- test_full %>%
+  mutate(price = predic_nnet_1$price_pred) %>%
+  select(property_id, price)
+
+
+# Guardar prediccion
+setwd(paste0(wd,"\\Resultados\\NeuralNetwork"))
+write.csv(test_nnet_1,"NeuralNetwork_hidden_units_10_penalty_0.001_epochs_200.csv",row.names = F) 
+
+
+
+
