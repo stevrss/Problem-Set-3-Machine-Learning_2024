@@ -359,3 +359,131 @@ results <- data.frame(
 
 # Mostrar resultados finales
 print(results)
+
+
+
+
+
+# Regresion lineal ------------------------------------------------------------
+
+
+# Se crea una muestra train y test con referencia dek 80% del tamaÑO
+set.seed(5678)
+n_train <- floor(0.8 * nrow(train_full))  
+
+# Creamos los indices
+train_indices <- sample(seq_len(nrow(train_full)), size = n_train)
+
+# Dividimos los datos
+train2 <- train_full[train_indices, ]  # Datos de entrenamiento
+test2 <-  train_full[-train_indices, ]  # Datos de prueba
+
+
+
+# Reemplazar NA en las demas variables categóricas por su moda
+
+#En train
+property_type_2_moda <- as.character(names(sort(table(train2$property_type_2), decreasing = TRUE)[1]))
+train2$property_type_2[is.na(train2$property_type_2)] <- property_type_2_moda
+
+localidad_moda <- as.character(names(sort(table(train2$localidad), decreasing = TRUE)[1]))
+train2$localidad[is.na(train2$localidad)] <- localidad_moda
+
+barrio_moda <- as.character(names(sort(table(train2$barrio), decreasing = TRUE)[1]))
+train2$barrio[is.na(train2$barrio)] <- barrio_moda
+
+#En test
+property_type_2_moda_test <- as.character(names(sort(table(test2$property_type_2), decreasing = TRUE)[1]))
+test2$property_type_2[is.na(test2$property_type_2)] <- property_type_2_moda_test
+
+localidad_moda_test <- as.character(names(sort(table(test2$localidad), decreasing = TRUE)[1]))
+test2$localidad[is.na(test2$localidad)] <- localidad_moda_test
+
+barrio_moda_test <- as.character(names(sort(table(test2$barrio), decreasing = TRUE)[1]))
+test2$barrio[is.na(test2$barrio)] <- barrio_moda_test
+
+
+# Especificamos del modelo
+linear_model <- lm(price ~ distancia_parque * property_type_2 + area_parque * property_type_2 +
+              distancia_parque * n_pisos_numerico + 
+              poly(distancia_parque, 2) + poly(area_parque, 2) +
+              distancia_policia + distancia_gym + distancia_bus +
+              distancia_super + distancia_bar + distancia_hosp + distancia_cole + distancia_cc +
+              distancia_rest + distancia_libreria + distancia_uni + distancia_banco + dist_avenida +
+              rooms_imp2 + bedrooms + bathrooms_imp2 + property_type_2 + localidad + 
+              n_pisos_numerico + are + parqu + balcon + remodel + sector, 
+            data = train2)
+
+# Predicciones en los datos de entrenamiento
+train2$y_pred <- predict(linear_model, newdata = train2)
+
+# Predicciones en los datos de prueba
+test2$y_pred <- predict(linear_model, newdata = test2)
+
+#Calculo del MAE
+mae_train <- mae(data = train2, truth = price, estimate = y_pred)
+mae_train$.estimate
+
+mae_test <- mae(data = test2, truth = price, estimate = y_pred)
+mae_test$.estimate
+
+
+
+# Prediccion fuera de muestra 
+predic_RL <- predict(linear_model, newdata = test_full)
+test_RL_1 <- test_full %>%
+  mutate(price = predic_RL) %>%
+  select(property_id, price)
+
+
+# Guardar prediccion
+setwd(paste0(wd,"\\Resultados\\RegLineal"))
+write.csv(test_RL_1,"RegLineal_model1.csv",row.names = F) 
+
+
+
+
+# Regresion lineal con logaritmo ------------------------------------------
+
+
+# Aplicar logaritmo al precio
+train2$log_price <- log1p(train2$price)
+test2$log_price <- log1p(test2$price)
+
+# Modelo
+linear_model_log <- lm(log_price ~ distancia_parque * property_type_2 + area_parque * property_type_2 +
+                     distancia_parque * n_pisos_numerico + 
+                     poly(distancia_parque, 2) + poly(area_parque, 2) +
+                     distancia_policia + distancia_gym + distancia_bus +
+                     distancia_super + distancia_bar + distancia_hosp + distancia_cole + distancia_cc +
+                     distancia_rest + distancia_libreria + distancia_uni + distancia_banco + dist_avenida +
+                     rooms_imp2 + bedrooms + bathrooms_imp2 + property_type_2 + localidad + 
+                     n_pisos_numerico + are + parqu + balcon + remodel + sector + 
+                    distancia_parque * area_parque + rooms_imp2 * bedrooms, 
+                   data = train2)
+
+
+# Predicciones en los datos de entrenamiento
+train2$log_y_pred <- predict(linear_model_log, newdata = train2)
+train2$y_pred <- expm1(train2$log_y_pred)
+
+test2$log_y_pred <- predict(linear_model_log, newdata = test2)
+test2$y_pred <- expm1(test2$log_y_pred)
+
+# Calcular el MAE en entrenamiento y prueba
+mae_train2 <- mae(data = train2, truth = price, estimate = y_pred)
+mae_train2$.estimate
+
+mae_test2 <- mae(data = test2, truth = price, estimate = y_pred)
+mae_test2$.estimate
+
+# Prediccion fuera de muestra 
+predic_RL_2 <- predict(linear_model_log, newdata = test_full)
+test_RL_2 <- test_full %>%
+  mutate(price = predic_RL_2) %>%
+  select(property_id, price)
+
+
+# Guardar prediccion
+setwd(paste0(wd,"\\Resultados\\RegLineal"))
+write.csv(test_RL_1,"RegLineal_model2.csv",row.names = F) 
