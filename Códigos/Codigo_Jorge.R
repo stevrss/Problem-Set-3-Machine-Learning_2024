@@ -189,7 +189,7 @@ reticulate::use_virtualenv("r-reticulate", required = TRUE)
 # Reinstalar TensorFlow en el nuevo entorno
 install_keras()
 
-
+y <- train2$price
 x <- scale(model.matrix(price ~ distancia_parque + area_parque + distancia_policia + distancia_gym +
                           distancia_bus + distancia_super + distancia_bar + distancia_hosp + 
                           distancia_cole + distancia_cc + distancia_rest + distancia_libreria + 
@@ -261,11 +261,63 @@ modnn %>% compile(loss = "mse",
 )
 
 history <- modnn %>% fit(
-  x[-testid, ], y[-testid], epochs = 600, batch_size = 32,
+  x, y, epochs = 600, batch_size = 32,
   validation_data = list(x[testid, ], y[testid])
 )
 
-npred <- predict(modnn, x[testid, ])
+# Preparar los datos de prueba (test2)
+
+x_test <- scale(model.matrix(price ~ distancia_parque + area_parque + distancia_policia + distancia_gym +
+                                    distancia_bus + distancia_super + distancia_bar + distancia_hosp + 
+                                    distancia_cole + distancia_cc + distancia_rest + distancia_libreria + 
+                                    distancia_uni + distancia_banco + dist_avenida + rooms_imp2 + bedrooms + 
+                                    bathrooms_imp2 + surface_total_median2 + surface_covered_median2 + abiert + acab + acces + alcob + 
+                                    ampli + are + ascensor + balcon + ban + bao + baos + bbq + bogot + buen + centr +
+                                    cerc + cerr + chimene + closet + cocin + comedor + comercial + comunal + cuart + 
+                                    cuatr + cubiert + cuent + deposit + dos + edifici + espaci + estudi + excelent + 
+                                    exterior + garaj + gas + gimnasi + habit + habitacion + hermos + ilumin + independient + 
+                                    integral + interior + lavanderi + lind + mader + mts + natural + parqu + parqueader + pis +
+                                    principal + priv + remodel + rop + sal + salon + sector + segur + servici + social + terraz + 
+                                    tres + ubicacion + uno + vias + vigil + visit + vist + zon + PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + 
+                                    PC7 + PC8 + PC9 + PC10 + PC11 + PC12 + PC13 + PC14 + PC15 + PC16 + PC17 + PC18 + PC19 + PC20 + 
+                                    PC21 + PC22 + PC23 + PC24 + PC25 + PC26 + PC27 + PC28 + PC29 + PC30 + PC31 + PC32 + PC33 + PC34 + 
+                                    PC35 + PC36 + PC37 + PC38 + PC39 + PC40 + PC41 + PC42 + property_type_2_Apartamento + 
+                                    property_type_2_Casa + n_pisos_numerico + piso_numerico + surface_total_median2^2 + rooms_imp2^2 +
+                                    surface_covered_median2^2+bedrooms^2+localidad_BARRIOS.UNIDOS + localidad_CANDELARIA + localidad_CHAPINERO +
+                                    localidad_ENGATIVA + localidad_PUENTE.ARANDA + localidad_SANTA.FE + localidad_SUBA + 
+                                    localidad_TEUSAQUILLO + localidad_USAQUEN+estrato_imp +zona_g_t - 1, data = test2))
+y_test <- test2$price
+
+# Ajustar el modelo y validar en test2
+history <- modnn %>% fit(
+  x, y, epochs = 600, batch_size = 32,
+  validation_data = list(x_test, y_test) # Usar test2 como validation_data
+)
+
+# Evaluar en test2
+evaluation <- modnn %>% evaluate(x_test, y_test)
+print(paste("Loss (MSE):", evaluation["loss"]))
+print(paste("Mean Absolute Error (MAE):", evaluation["mean_absolute_error"]))
+
+# Predicciones y métricas manuales
+npred_test2 <- predict(modnn, x_test)
+
+mse_test2 <- mean((npred_test2 - y_test)^2)
+mae_test2 <- mean(abs(npred_test2 - y_test))
+
+print(paste("MSE en test2:", mse_test2))
+print(paste("MAE en test2:", mae_test2))
+
+# Realizar modelo con mas de una capa --------------------
+
+layer_dense(units = 10, activation = 'softmax')
+
+modnn <- keras_model_sequential() %>%
+  layer_dense(units = 50, activation = "relu", input_shape = ncol(x)) %>%
+  layer_dense(units = 50, activation = "softmax", input_shape = ncol(x)) %>%
+  
+  layer_dropout(rate = 0.4) %>%
+  layer_dense(units = 1)
 
 #######################################################
 #######################################################
