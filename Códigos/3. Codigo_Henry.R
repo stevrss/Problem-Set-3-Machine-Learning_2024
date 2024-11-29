@@ -274,6 +274,8 @@ write.csv(test_EN_1,"EN_model1_lambda_0.0001_alpha_0.csv",row.names = F)
 
 # Superlerner ------------------------------------------------------------------
 
+library(ranger)
+library(randomForest)
 
 # Se especifica la metrica
 maeSummary <- function(data, lev = NULL, model = NULL) {
@@ -295,8 +297,8 @@ custom_rf <- create.Learner("SL.randomForest",
                             tune = list(mtry = round(c(1, sqrt(4), 3))))
 custon_glmnet = create.Learner("SL.glmnet", tune = list(alpha = seq(0, 1, length.out=3)))
 
-sl.lib <- c("SL.randomForest", "SL.lm",custom_ranger$names,custom_rf$names)
-
+sl.lib <- c("SL.randomForest", "SL.lm",custom_ranger$names,custom_rf$names, custon_glmnet$names)
+sl.lib
 
 
 # Lista de variables relevantes
@@ -623,5 +625,183 @@ setwd(paste0(wd,"\\Resultados\\NeuralNetwork"))
 write.csv(test_nnet_1,"NeuralNetwork_hidden_units_10_penalty_0.001_epochs_200.csv",row.names = F) 
 
 
+
+
+
+
+# Red Neuronal 2 capas ------------------------------------------------------------
+
+# Se crea una muestra train y test con referencia dek 80% del tamaÑO
+set.seed(0987)
+n_train <- floor(0.8 * nrow(train_full))  
+
+# Creamos los indices
+train_indices <- sample(seq_len(nrow(train_full)), size = n_train)
+
+# Dividimos los datos
+train2 <- train_full[train_indices, ]  # Datos de entrenamiento
+test2 <-  train_full[-train_indices, ]  # Datos de prueba
+
+
+# Reemplazar NA en las demas variables categóricas por su moda
+
+#En train
+property_type_2_moda <- as.character(names(sort(table(train2$property_type_2), decreasing = TRUE)[1]))
+train2$property_type_2[is.na(train2$property_type_2)] <- property_type_2_moda
+
+localidad_moda <- as.character(names(sort(table(train2$localidad), decreasing = TRUE)[1]))
+train2$localidad[is.na(train2$localidad)] <- localidad_moda
+
+barrio_moda <- as.character(names(sort(table(train2$barrio), decreasing = TRUE)[1]))
+train2$barrio[is.na(train2$barrio)] <- barrio_moda
+
+#En test
+property_type_2_moda_test <- as.character(names(sort(table(test2$property_type_2), decreasing = TRUE)[1]))
+test2$property_type_2[is.na(test2$property_type_2)] <- property_type_2_moda_test
+
+localidad_moda_test <- as.character(names(sort(table(test2$localidad), decreasing = TRUE)[1]))
+test2$localidad[is.na(test2$localidad)] <- localidad_moda_test
+
+barrio_moda_test <- as.character(names(sort(table(test2$barrio), decreasing = TRUE)[1]))
+test2$barrio[is.na(test2$barrio)] <- barrio_moda_test
+
+
+#Formula
+formula_nnet_2 <- as.formula(
+  "price ~ distancia_parque + area_parque + 
+                 distancia_policia + distancia_gym + distancia_bus +
+                 distancia_super + distancia_bar + distancia_hosp + distancia_cole + 
+                 distancia_cc + distancia_rest + distancia_libreria + distancia_uni + 
+                 distancia_banco + dist_avenida + rooms_imp2 + bedrooms + bathrooms_imp2 + 
+                 property_type_2 + localidad + n_pisos_numerico + are + parqu + balcon + 
+                 remodel + sector"
+)
+
+
+
+recipe_nnet_2 <-
+  recipe(formula_nnet_2, data = train2)  %>%
+  step_novel(all_nominal_predictors()) %>%          # Maneja clases no vistas
+  step_dummy(all_nominal_predictors()) %>%         # Crear variables dummy
+  step_zv(all_predictors()) %>%                    # Eliminar varianza cero
+  step_normalize(all_numeric_predictors())    # Normalizar predictores
+
+#Se ajusta el modelo
+nn_b<-  brulee_mlp(recipe_nnet_2, 
+                   train2,
+                   epochs = 200, 
+                   hidden_units = c(10,10),
+                   activation = c("relu", "relu"),
+                   learn_rate = 0.01,
+                   penalty =  0.001, 
+                   dropout= 0.1, 
+                   stop_iter= 100, 
+                   validation=0.2)
+
+
+
+# Evaluación en el test
+test_predictions_2 <- predict(nn_b, test2) %>% 
+  mutate(price_pred = .pred)  # Devolver al valor original
+
+test2 <- test2 %>%
+  mutate(price_pred = test_predictions_2$price_pred)
+
+
+# Calcular MAE
+mae_result <- mae(
+  data = test2,
+  truth = price,  # Variable objetivo transformada
+  estimate = price_pred    # Predicciones
+)
+mae_result
+
+
+# Prediccion fuera de muestra 
+predic_nnet_2 <- predict(nn_b, new_data = test_full) %>%
+  mutate(price_pred = .pred) 
+test_nnet_2 <- test_full %>%
+  mutate(price = predic_nnet_2$price_pred) %>%
+  select(property_id, price)
+
+
+# Guardar prediccion
+setwd(paste0(wd,"\\Resultados\\NeuralNetwork"))
+write.csv(test_nnet_2,"NeuralNetwork_2capas_hidden_units_10_penalty_0.001_epochs_200.csv",row.names = F) 
+
+
+
+
+
+# Red Neuronal 2 capas con logaritmo del precio ------------------------------------------------------------
+
+
+# Aplicar logaritmo al precio
+train2$log_price <- log1p(train2$price)
+test2$log_price <- log1p(test2$price)
+
+
+#Formula
+formula_nnet_2 <- as.formula(
+  "log_price ~ distancia_parque + area_parque + 
+                 distancia_policia + distancia_gym + distancia_bus +
+                 distancia_super + distancia_bar + distancia_hosp + distancia_cole + 
+                 distancia_cc + distancia_rest + distancia_libreria + distancia_uni + 
+                 distancia_banco + dist_avenida + rooms_imp2 + bedrooms + bathrooms_imp2 + 
+                 property_type_2 + localidad + n_pisos_numerico + are + parqu + balcon + 
+                 remodel + sector"
+)
+
+
+
+recipe_nnet_2 <-
+  recipe(formula_nnet_2, data = train2)  %>%
+  step_novel(all_nominal_predictors()) %>%          # Maneja clases no vistas
+  step_dummy(all_nominal_predictors()) %>%         # Crear variables dummy
+  step_zv(all_predictors()) %>%                    # Eliminar varianza cero
+  step_normalize(all_numeric_predictors())    # Normalizar predictores
+
+#Se ajusta el modelo
+nn_b<-  brulee_mlp(recipe_nnet_2, 
+                   train2,
+                   epochs = 200, 
+                   hidden_units = c(10,10),
+                   activation = c("relu", "relu"),
+                   learn_rate = 0.01,
+                   penalty =  0.001, 
+                   dropout= 0.1, 
+                   stop_iter= 100, 
+                   validation=0.2)
+
+
+
+# Evaluación en el test
+test_predictions_2 <- predict(nn_b, test2) %>% 
+  mutate(price_pred = .pred)  # Devolver al valor original
+
+test2 <- test2 %>%
+  mutate(price_pred = test_predictions_2$price_pred)
+
+
+# Calcular MAE
+mae_result <- mae(
+  data = test2,
+  truth = price,  # Variable objetivo transformada
+  estimate = price_pred    # Predicciones
+)
+mae_result
+
+
+# Prediccion fuera de muestra 
+predic_nnet_2 <- predict(nn_b, new_data = test_full) %>%
+  mutate(price_pred = .pred) 
+test_nnet_2 <- test_full %>%
+  mutate(price = predic_nnet_2$price_pred) %>%
+  select(property_id, price)
+
+
+# Guardar prediccion
+setwd(paste0(wd,"\\Resultados\\NeuralNetwork"))
+write.csv(test_nnet_2,"NeuralNetwork_2capas_hidden_units_10_penalty_0.001_epochs_200.csv",row.names = F) 
 
 

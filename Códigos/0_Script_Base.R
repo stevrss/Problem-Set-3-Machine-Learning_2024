@@ -53,7 +53,7 @@ p_load(
   
   # --------------------------- Redes neuronales --------------------------------
   nnet,          # Redes neuronales simples de una capa (útil para regresión/clasificación básica).
-  Brulee,        # Implementación moderna para redes neuronales más complejas.
+  brulee,        # Implementación moderna para redes neuronales más complejas.
   
   # ---------------------- Herramientas de visualización ----------------------
   skimr,         # Resúmenes de datos detallados.
