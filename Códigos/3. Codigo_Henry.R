@@ -150,6 +150,8 @@ maeSummary <- function(data, lev = NULL, model = NULL) {
 
 
 #Definimos el modelo
+install.packages("tidymodels")
+library(tidymodels)
 
 elastic_net_spec <- linear_reg(penalty = tune(), mixture = tune()) %>%
   set_engine("glmnet")
@@ -735,6 +737,9 @@ write.csv(test_nnet_2,"NeuralNetwork_2capas_hidden_units_10_penalty_0.001_epochs
 
 # Red Neuronal 2 capas con logaritmo del precio ------------------------------------------------------------
 
+
+install.packages("recipes")  # Instala el paquete si no lo tienes
+library(recipes)  
 
 # Aplicar logaritmo al precio
 train2$log_price <- log1p(train2$price)
