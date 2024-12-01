@@ -21,7 +21,7 @@ test <- Test %>%
 
 # 2. Arreglo de datos ----------------------------------------------------------
 
-# Calcular la moda (el valor más frecuente) de la columna localidad
+# Calcular la moda (el valor mï¿½s frecuente) de la columna localidad
 localidad_moda <- as.character(names(sort(table(test$localidad), decreasing = TRUE)[1]))
 
 # Reemplazar los valores NA con la moda
@@ -37,10 +37,10 @@ des_test_scource <- VectorSource(descriptions_test)
 des_corpus_train <- VCorpus(des_train_scource, readerControl = list( language = "es"))
 des_corpus_test <- VCorpus(des_test_scource, readerControl = list( language = "es"))
 
-# Función para reemplazar números por palabras
+# Funciï¿½n para reemplazar nï¿½meros por palabras
 reemplazar_numeros <- function(texto) {
   palabras <- c("cero", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez")
-  # Reemplazar números del 0 al 10 por palabras
+  # Reemplazar nï¿½meros del 0 al 10 por palabras
   for (i in 0:10) {
     texto <- gsub(sprintf("\\b%d\\b", i), palabras[i + 1], texto)}
   return(texto)}
@@ -54,12 +54,12 @@ reemplazar_car_especiales <- function(texto) {
   texto_sin_espe <-str_replace_all(texto, "[^[:alnum:]]", " ")
   return(texto_sin_espe)}
 
-## volver a las palabras a sus raíces
+## volver a las palabras a sus raï¿½ces
 stem_espanol<-  function(texto) {
   texto_stem <- stemDocument(texto, language="spanish")
   return(texto_stem)}
 
-# Descargamos la lista de las stopwords en español de dos fuentes diferentes y las combinamos
+# Descargamos la lista de las stopwords en espaï¿½ol de dos fuentes diferentes y las combinamos
 lista_palabras1 <- stopwords(language = "es", source = "snowball")
 lista_palabras2 <- stopwords(language = "es", source = "nltk")
 lista_palabras <- union(lista_palabras1, lista_palabras2)
@@ -68,9 +68,9 @@ lista_palabras<- union(lista_palabras,  c("vendo", "venta", "vende", "etc", "car
 
 clean_corpus <- function(corpus){
   corpus <- tm_map(corpus, stripWhitespace) ## remover espacios en blanco
-  corpus <- tm_map(corpus, removePunctuation)  ## remover puntuacióm
+  corpus <- tm_map(corpus, removePunctuation)  ## remover puntuaciï¿½m
   corpus <- tm_map(corpus, content_transformer(tolower)) # todo minuscula 
-  corpus <- tm_map(corpus, removeWords, c(lista_palabras)) # remover stopwords y otras que se quieran aádir
+  corpus <- tm_map(corpus, removeWords, c(lista_palabras)) # remover stopwords y otras que se quieran aï¿½dir
   corpus<-  tm_map(corpus, content_transformer(reemplazar_numeros))  ## incluir funciones que nosotros creamos 
   corpus<-  tm_map(corpus, content_transformer(eliminar_tildes))  ## incluir funciones que nosotros creamos
   corpus<-  tm_map(corpus, content_transformer(reemplazar_car_especiales))  ## incluir funciones que nosotros creamos
@@ -78,7 +78,7 @@ clean_corpus <- function(corpus){
   corpus<-  tm_map(corpus, removeNumbers)  # remover numeros restantes
   return(corpus)}
 
-# apliquemos nuestra función de limpieza:
+# apliquemos nuestra funciï¿½n de limpieza:
 clean_des_train <- clean_corpus(des_corpus_train)
 clean_des_test <- clean_corpus(des_corpus_test)
 
@@ -156,10 +156,10 @@ test_full_dummys$zona_g_t <- ifelse(test_full_dummys$zona_g==1|test_full_dummys$
 # Se crea una muestra train y test 
 set.seed(1536) # Para reproducibilidad
 
-# Tamaño del conjunto de entrenamiento
-n_train <- floor(0.8 * nrow(train_full_dummys))  # 80% del tamaño total
+# Tamaï¿½o del conjunto de entrenamiento
+n_train <- floor(0.8 * nrow(train_full_dummys))  # 80% del tamaï¿½o total
 
-# Crear índices aleatorios para entrenamiento
+# Crear ï¿½ndices aleatorios para entrenamiento
 train_indices <- sample(seq_len(nrow(train_full_dummys)), size = n_train)
 
 # Dividir los datos
@@ -170,23 +170,23 @@ test2 <-  train_full_dummys[-train_indices, ]  # Datos de prueba
 
 maeSummary <- function(data, lev = NULL, model = NULL) {
   out <- mean(abs(data$obs - data$pred)) # Calcula el MAE
-  names(out) <- "MAE"                   # Nombra la métrica
+  names(out) <- "MAE"                   # Nombra la mï¿½trica
   return(out)
 }
 
 fitControl <- trainControl(
-  method = "cv",             # Validación cruzada
-  number = 5,                # Número de particiones
+  method = "cv",             # Validaciï¿½n cruzada
+  number = 5,                # Nï¿½mero de particiones
   verboseIter = TRUE,        # Muestra progreso
-  summaryFunction = maeSummary # Usa la función MAE personalizada
+  summaryFunction = maeSummary # Usa la funciï¿½n MAE personalizada
 )
 
-#Cargamos los parámetros del boosting
+#Cargamos los parï¿½metros del boosting
 grid_xbgoost <- expand.grid(nrounds = c(500),
-                            max_depth = c(4,6), 
-                            eta = c(0,0.05), 
-                            gamma = c(0,0.1), 
-                            min_child_weight = c(25,50),
+                            max_depth = c(6), 
+                            eta = c(0.15), 
+                            gamma = c(15), 
+                            min_child_weight = c(10),
                             colsample_bytree = c(0.66),
                             subsample = c(0.4,0.8))
 
@@ -215,10 +215,10 @@ XGBoost_model_1 <- caret::train(price ~ distancia_parque + area_parque + distanc
                           data=train2[-1], #excluye variable de property_id
                           method = "xgbTree",
                           trControl = fitControl,
-                          metric = "MAE", # Indica que la métrica objetivo es MAE
+                          metric = "MAE", # Indica que la mï¿½trica objetivo es MAE
                           tuneGrid=grid_xbgoost)        
 
-# Obtener los mejores hiperparámetros
+# Obtener los mejores hiperparï¿½metros
 best_hyperparameters <- XGBoost_model_1$bestTune
 print(best_hyperparameters)
 
@@ -236,14 +236,14 @@ train_XGBoost_model_1 <- train2 %>%
   mutate(price_pred = predict(XGBoost_model_1, newdata = train2))  
 
 mae_value_train <- mean(abs(train_XGBoost_model_1$price - train_XGBoost_model_1$price_pred))
-print(mae_value_train)  # 89613366
+print(mae_value_train)  # 89613366 vs 70664313 vs 70236645 vs 60465280 vs 48688390 VF
 
 # Prediccion fuera de muestra 
 test_XGBoost_model_1 <- test2 %>% 
   mutate(price_pred = predict(XGBoost_model_1, newdata = test2))  
 
 mae_value_test <- mean(abs(test_XGBoost_model_1$price - test_XGBoost_model_1$price_pred))
-print(mae_value_test)  # 117231096
+print(mae_value_test)  # 117231096 vs 109446775 vs 109021105 vs 106177795 vs 106437327 vs 106693941 VF
 
 # Importancia de variables 
 p_load(DiagrammeR)
@@ -262,8 +262,8 @@ test_XGBoost_model_1 <- test_full_dummys %>%
 
 # Guardar prediccion
 setwd(paste0(wd,"\\Resultados\\XGboost"))
-write.csv(test_XGBoost_model_1,"XGBoost_model1_nr500_maxd6_eta0.05_g0.1_col0.66_min25_sub0.8.csv",row.names = F) 
-#Puntaje Kaggle: 230537671.28
+write.csv(test_XGBoost_model_1,"XGBoost_model1_nr500_maxd6_eta0.15_g0.15_col0.66_min10_sub0.8.csv",row.names = F) 
+#Puntaje Kaggle: 230537671.28 vs 233586592.35 vs 227872992.63 vs 228451088.75 vs 
 
 # 3.2  XGbosst 1 - Validacion cruzada espacial ---------------------------------
 Formula_1_XG = as.formula("price ~ distancia_parque + area_parque + distancia_policia + distancia_gym +
