@@ -460,3 +460,169 @@ write.csv(resultado_predicciones, "/content/predicciones_test_final.csv", row.na
 
 # Superlearner con XGBoost y otro modelo NNLS --------------------------------
 
+# Cargar librerías necesarias
+library(SuperLearner)
+library(caret)
+library(glmnet)
+library(xgboost)
+library(tidyverse)
+library(parallel)
+library(doParallel)
+
+# Configurar paralelización
+n_cores <- detectCores() - 1  # Detectar núcleos disponibles y reservar uno
+cl <- makeCluster(n_cores)   # Crear el clúster
+registerDoParallel(cl)       # Registrar paralelización para caret
+
+cat("Número de núcleos usados:", n_cores, "\n")
+
+# Selección explícita de variables predictoras (según el modelo de XGBoost)
+predictors <- c(
+  "distancia_parque", "area_parque", "distancia_policia", "distancia_gym", 
+  "distancia_bus", "distancia_super", "distancia_bar", "distancia_hosp",
+  "distancia_cole", "distancia_cc", "distancia_rest", "distancia_libreria",
+  "distancia_uni", "distancia_banco", "dist_avenida", "rooms_imp2", "bedrooms",
+  "bathrooms_imp2", "surface_total_median2", "surface_covered_median2", 
+  "abiert", "acab", "acces", "alcob", "ampli", "are", "ascensor", "balcon", 
+  "ban", "bao", "baos", "bbq", "bogot", "buen", "centr", "cerc", "cerr", 
+  "chimene", "closet", "cocin", "comedor", "comercial", "comunal", "cuart",
+  "cuatr", "cubiert", "cuent", "deposit", "dos", "edifici", "espaci", 
+  "estudi", "excelent", "exterior", "garaj", "gas", "gimnasi", "habit", 
+  "habitacion", "hermos", "ilumin", "independient", "integral", "interior", 
+  "lavanderi", "lind", "mader", "mts", "natural", "parqu", "parqueader", 
+  "pis", "principal", "priv", "remodel", "rop", "sal", "salon", "sector", 
+  "segur", "servici", "social", "terraz", "tres", "ubicacion", "uno", "vias", 
+  "vigil", "visit", "vist", "zon", "PC1", "PC2", "PC3", "PC4", "PC5", "PC6",
+  "PC7", "PC8", "PC9", "PC10", "PC11", "PC12", "PC13", "PC14", "PC15", 
+  "PC16", "PC17", "PC18", "PC19", "PC20", "PC21", "PC22", "PC23", "PC24", 
+  "PC25", "PC26", "PC27", "PC28", "PC29", "PC30", "PC31", "PC32", "PC33", 
+  "PC34", "PC35", "PC36", "PC37", "PC38", "PC39", "PC40", "PC41", "PC42", 
+  "property_type_2_Apartamento", "property_type_2_Casa", "n_pisos_numerico", 
+  "piso_numerico", "localidad_BARRIOS.UNIDOS", 
+  "localidad_CANDELARIA", "localidad_CHAPINERO", "localidad_ENGATIVA", 
+  "localidad_PUENTE.ARANDA", "localidad_SANTA.FE", "localidad_SUBA", 
+  "localidad_TEUSAQUILLO", "localidad_USAQUEN", "estrato_imp", "zona_g_t"
+)
+
+# Preparar datos
+x_train <- train2[, predictors]  # Variables predictoras seleccionadas
+y_train <- train2$price          # Variable objetivo
+x_test2 <- test2[, predictors]   # Variables predictoras del conjunto de prueba
+y_test2 <- test2$price            # Variable objetivo del conjunto de prueba
+
+
+# Revisar si hay valores faltantes
+if (any(is.na(x_train))) stop("x_train contiene valores NA")
+if (any(is.na(x_test2))) stop("x_test2 contiene valores NA")
+
+### Learner de XGBoost ###
+SL.xgboost <- function(Y, X, newX, family, ...) {
+  fitControl <- trainControl(
+    method = "cv",
+    number = 5,
+    verboseIter = TRUE,
+    summaryFunction = maeSummary,
+    allowParallel = TRUE
+  )
+  
+  grid_xgboost <- expand.grid(
+    nrounds = c(10),
+    max_depth = c(4),
+    eta = c(0.05),
+    gamma = c(0),
+    min_child_weight = c(50),
+    colsample_bytree = c(0.66),
+    subsample = c(0.8)
+  )
+  
+  # Entrenar el modelo
+  model <- caret::train(
+    x = as.matrix(X),
+    y = Y,
+    method = "xgbTree",
+    trControl = fitControl,
+    tuneGrid = grid_xgboost,
+    metric = "MAE"
+  )
+  
+  # Generar predicciones
+  pred <- predict(model, newdata = as.matrix(newX))
+  
+  # Devolver predicciones como lista
+  return(list(pred = as.vector(pred)))
+}
+
+### Learner de Elastic Net ###
+SL.elasticnet <- function(Y, X, newX, family, ...) {
+  fitControl <- trainControl(
+    method = "cv",
+    number = 5,
+    verboseIter = TRUE,
+    summaryFunction = maeSummary,
+    allowParallel = TRUE  # Paralelización
+  )
+  
+  grid_enet <- expand.grid(
+    alpha = seq(0, 1, length = 5),
+    lambda = seq(0.01, 0.1, length = 5)
+  )
+  
+  # Entrenar el modelo
+  model <- caret::train(
+    x = as.matrix(X),
+    y = Y,
+    method = "glmnet",
+    trControl = fitControl,
+    tuneGrid = grid_enet,
+    metric = "MAE"
+  )
+  
+  # Generar predicciones
+  pred <- predict(model, newdata = as.matrix(newX))
+  
+  # Depuración: imprimir estructura de predicciones
+  print(str(pred))
+  
+  if (!is.numeric(pred)) stop("Las predicciones de SL.elasticnet no son numéricas.")
+  return(as.vector(pred)) 
+}
+
+
+### Entrenamiento del SuperLearner ###
+sl <- SuperLearner(
+  Y = y_train,
+  X = as.data.frame(x_train),
+  method = "method.NNLS",  # Para regresión
+  SL.library = c("SL.xgboost", "SL.elasticnet"),
+  verbose = TRUE 
+)
+
+sl <- SuperLearner(
+  Y = y_train,
+  X = as.data.frame(x_train),
+  newX = as.data.frame(x_test2),
+  family = gaussian(),
+  SL.library = c("SL.xgboost"),
+  verbose = TRUE
+)
+
+
+print(sl)
+
+# Evaluación en test2
+mse_test2 <- mean((sl$SL.predict - y_test2)^2)
+mae_test2 <- mean(abs(sl$SL.predict - y_test2))
+
+print(str(x_train))  # Debe ser un data.frame o matrix
+print(str(y_train))  # Debe ser un vector numérico
+print(str(x_test2))  # Debe ser un data.frame o matrix
+
+cat("Desempeño del SuperLearner:\n")
+cat("MSE en test2:", mse_test2, "\n")
+cat("MAE en test2:", mae_test2, "\n")
+
+#######
+
+pred_xgb <- SL.elasticnet(y_train, x_train, x_test2, family = gaussian())
+print(str(pred_xgb)) # Verificar las predicciones
+
