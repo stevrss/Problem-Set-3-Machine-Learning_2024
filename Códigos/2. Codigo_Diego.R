@@ -184,9 +184,9 @@ fitControl <- trainControl(
 #Cargamos los parámetros del boosting
 grid_xbgoost <- expand.grid(nrounds = c(500),
                             max_depth = c(6), 
-                            eta = c(0.05,0.1,0.15), 
-                            gamma = c(0.1,0.15,0.2,0.25), 
-                            min_child_weight = c(10,15,20),
+                            eta = c(0.15), 
+                            gamma = c(15), 
+                            min_child_weight = c(10),
                             colsample_bytree = c(0.66),
                             subsample = c(0.8))
 
@@ -251,14 +251,14 @@ train_XGBoost_model_1 <- train2 %>%
   mutate(price_pred = predict(XGBoost_model_1, newdata = train2))  
 
 mae_value_train <- mean(abs(train_XGBoost_model_1$price - train_XGBoost_model_1$price_pred))
-print(mae_value_train)  # 89613366 vs 70664313 vs 70236645 vs 60465280 vs 48780882 VF
+print(mae_value_train)  # 89613366 vs 70664313 vs 70236645 vs 60465280 vs 48688390 VF
 
 # Prediccion fuera de muestra 
 test_XGBoost_model_1 <- test2 %>% 
   mutate(price_pred = predict(XGBoost_model_1, newdata = test2))  
 
 mae_value_test <- mean(abs(test_XGBoost_model_1$price - test_XGBoost_model_1$price_pred))
-print(mae_value_test)  # 117231096 vs 109446775 vs 109021105 vs 106177795 vs 106437327 vs 106804677 VF
+print(mae_value_test)  # 117231096 vs 109446775 vs 109021105 vs 106177795 vs 106437327 vs 106693941 VF
 
 # Importancia de variables 
 p_load(DiagrammeR)
@@ -277,7 +277,7 @@ test_XGBoost_model_1 <- test_full_dummys %>%
 
 # Guardar prediccion
 setwd(paste0(wd,"\\Resultados\\XGboost"))
-write.csv(test_XGBoost_model_1,"XGBoost_model1_nr500_maxd6_eta0.15_g0.2_col0.66_min10_sub0.8.csv",row.names = F) 
+write.csv(test_XGBoost_model_1,"XGBoost_model1_nr500_maxd6_eta0.15_g0.15_col0.66_min10_sub0.8.csv",row.names = F) 
 #Puntaje Kaggle: 230537671.28 vs 233586592.35 vs 227872992.63 vs 228451088.75 vs 
 
 # 3.2  XGbosst 1 - Validacion cruzada espacial ---------------------------------
