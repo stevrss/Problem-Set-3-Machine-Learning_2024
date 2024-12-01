@@ -17,3 +17,9 @@ Respecto a las carpetas, contienen la siguiente información:
 
 * Códigos: En esta carpeta están los scripts utilizados para generar los resultados. Dado que para solucionar el problema de clasificación fue necesario probar diferentes metodologías, en cada archivo se encuentran un proceso inicial de control de los datos junto con una especificación del modelo a utilizar.
 
+* Gráficas: Aquí se almacenan las visualizaciones que ayudaron en el análisis de la información y permitieron evaluar visualmente los resultados obtenidos durante el taller.
+
+* Output: Esta carpeta contiene los archivos .csv que fueron cargados a la plataforma de Kaggle para el cálculo del MAE. Cada archivo se almacena en una carpeta con el nombre del algoritmo que fue utilizado.
+
+* Documento: Presenta el documento final en pdf en el que se desarrolló el taller.
+
