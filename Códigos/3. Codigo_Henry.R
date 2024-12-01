@@ -150,8 +150,6 @@ maeSummary <- function(data, lev = NULL, model = NULL) {
 
 
 #Definimos el modelo
-install.packages("tidymodels")
-library(tidymodels)
 
 elastic_net_spec <- linear_reg(penalty = tune(), mixture = tune()) %>%
   set_engine("glmnet")
@@ -164,10 +162,10 @@ grid_values <- grid_regular(penalty(range = c(-4,2)), levels = 50) %>%
 # Primera receta
 rec_1 <- recipe(
   price ~ distancia_parque + area_parque + distancia_policia + distancia_gym + distancia_bus +
-  distancia_super + distancia_bar + distancia_hosp + distancia_cole + distancia_cc +
-  distancia_rest + distancia_libreria + distancia_uni + distancia_banco + dist_avenida +
-  rooms_imp2 + bedrooms + bathrooms_imp2 + property_type_2 + localidad + barrio + n_pisos_numerico +
-  are + parqu + balcon + remodel + sector, data = train2) %>%
+    distancia_super + distancia_bar + distancia_hosp + distancia_cole + distancia_cc +
+    distancia_rest + distancia_libreria + distancia_uni + distancia_banco + dist_avenida +
+    rooms_imp2 + bedrooms + bathrooms_imp2 + property_type_2 + localidad + barrio + n_pisos_numerico +
+    are + parqu + balcon + remodel + sector, data = train2) %>%
   step_interact(terms = ~ distancia_parque:property_type_2 + area_parque:property_type_2) %>%  
   step_interact(terms = ~ distancia_parque:n_pisos_numerico) %>%  
   step_novel(all_nominal_predictors()) %>%   
@@ -179,10 +177,10 @@ rec_1 <- recipe(
 # Segunda receta 
 rec_2 <- recipe(
   price ~ distancia_parque + area_parque + distancia_policia + distancia_gym + distancia_bus +
-  distancia_super + distancia_bar + distancia_hosp + distancia_cole + distancia_cc +
-  distancia_rest + distancia_libreria + distancia_uni + distancia_banco + dist_avenida +
-  rooms_imp2 + bedrooms + bathrooms_imp2 + property_type_2 + localidad + barrio + n_pisos_numerico +
-  are + parqu + balcon + remodel + sector, data = train2) %>%
+    distancia_super + distancia_bar + distancia_hosp + distancia_cole + distancia_cc +
+    distancia_rest + distancia_libreria + distancia_uni + distancia_banco + dist_avenida +
+    rooms_imp2 + bedrooms + bathrooms_imp2 + property_type_2 + localidad + barrio + n_pisos_numerico +
+    are + parqu + balcon + remodel + sector, data = train2) %>%
   step_interact(terms = ~ distancia_parque:property_type_2 + area_parque:property_type_2) %>%  
   step_interact(terms = ~ distancia_parque:n_pisos_numerico) %>%  
   step_poly(distancia_parque, area_parque, degree = 2) %>%  
@@ -409,14 +407,14 @@ test2$barrio[is.na(test2$barrio)] <- barrio_moda_test
 
 # Especificamos del modelo
 linear_model <- lm(price ~ distancia_parque * property_type_2 + area_parque * property_type_2 +
-              distancia_parque * n_pisos_numerico + 
-              poly(distancia_parque, 2) + poly(area_parque, 2) +
-              distancia_policia + distancia_gym + distancia_bus +
-              distancia_super + distancia_bar + distancia_hosp + distancia_cole + distancia_cc +
-              distancia_rest + distancia_libreria + distancia_uni + distancia_banco + dist_avenida +
-              rooms_imp2 + bedrooms + bathrooms_imp2 + property_type_2 + localidad + 
-              n_pisos_numerico + are + parqu + balcon + remodel + sector, 
-            data = train2)
+                     distancia_parque * n_pisos_numerico + 
+                     poly(distancia_parque, 2) + poly(area_parque, 2) +
+                     distancia_policia + distancia_gym + distancia_bus +
+                     distancia_super + distancia_bar + distancia_hosp + distancia_cole + distancia_cc +
+                     distancia_rest + distancia_libreria + distancia_uni + distancia_banco + dist_avenida +
+                     rooms_imp2 + bedrooms + bathrooms_imp2 + property_type_2 + localidad + 
+                     n_pisos_numerico + are + parqu + balcon + remodel + sector, 
+                   data = train2)
 
 # Predicciones en los datos de entrenamiento
 train2$y_pred <- predict(linear_model, newdata = train2)
@@ -456,15 +454,15 @@ test2$log_price <- log1p(test2$price)
 
 # Modelo
 linear_model_log <- lm(log_price ~ distancia_parque * property_type_2 + area_parque * property_type_2 +
-                     distancia_parque * n_pisos_numerico + 
-                     poly(distancia_parque, 2) + poly(area_parque, 2) +
-                     distancia_policia + distancia_gym + distancia_bus +
-                     distancia_super + distancia_bar + distancia_hosp + distancia_cole + distancia_cc +
-                     distancia_rest + distancia_libreria + distancia_uni + distancia_banco + dist_avenida +
-                     rooms_imp2 + bedrooms + bathrooms_imp2 + property_type_2 + localidad + 
-                     n_pisos_numerico + are + parqu + balcon + remodel + sector + 
-                    distancia_parque * area_parque + rooms_imp2 * bedrooms, 
-                   data = train2)
+                         distancia_parque * n_pisos_numerico + 
+                         poly(distancia_parque, 2) + poly(area_parque, 2) +
+                         distancia_policia + distancia_gym + distancia_bus +
+                         distancia_super + distancia_bar + distancia_hosp + distancia_cole + distancia_cc +
+                         distancia_rest + distancia_libreria + distancia_uni + distancia_banco + dist_avenida +
+                         rooms_imp2 + bedrooms + bathrooms_imp2 + property_type_2 + localidad + 
+                         n_pisos_numerico + are + parqu + balcon + remodel + sector + 
+                         distancia_parque * area_parque + rooms_imp2 * bedrooms, 
+                       data = train2)
 
 
 # Predicciones en los datos de entrenamiento
@@ -738,9 +736,6 @@ write.csv(test_nnet_2,"NeuralNetwork_2capas_hidden_units_10_penalty_0.001_epochs
 # Red Neuronal 3 capas con logaritmo del precio ------------------------------------------------------------
 
 
-install.packages("recipes")  # Instala el paquete si no lo tienes
-library(recipes)  
-
 # Aplicar logaritmo al precio
 train2$log_price <- log1p(train2$price)
 test2$log_price <- log1p(test2$price)
@@ -768,15 +763,15 @@ recipe_nnet_2_log <-
 
 #Se ajusta el modelo
 nn_b_log<-  brulee_mlp(recipe_nnet_2_log, 
-                   train2,
-                   epochs = 200, 
-                   hidden_units = c(10,10,10),
-                   activation = c("relu", "relu","relu"),
-                   learn_rate = 0.01,
-                   penalty =  0.001, 
-                   dropout= 0.1, 
-                   stop_iter= 100, 
-                   validation=0.2)
+                       train2,
+                       epochs = 200, 
+                       hidden_units = c(10,10,10),
+                       activation = c("relu", "relu","relu"),
+                       learn_rate = 0.01,
+                       penalty =  0.001, 
+                       dropout= 0.1, 
+                       stop_iter= 100, 
+                       validation=0.2)
 
 
 
@@ -887,14 +882,14 @@ best_tune_nnet$hidden_units   ## 20 10  5
 
 set.seed(270499)
 nn_tune_log<-brulee_mlp(recipe_nnet_2_log, 
-                     train2,
-                     hidden_units = c(20,10,5),
-                     penalty = best_tune_nnet$penalty[1],
-                     dropout = best_tune_nnet$dropout[1],
-                     epochs = 300,
-                     learn_rate =best_tune_nnet$learn_rate[1],
-                     activation = c("relu", "relu","relu"),
-                     validation= 0, 
+                        train2,
+                        hidden_units = c(20,10,5),
+                        penalty = best_tune_nnet$penalty[1],
+                        dropout = best_tune_nnet$dropout[1],
+                        epochs = 300,
+                        learn_rate =best_tune_nnet$learn_rate[1],
+                        activation = c("relu", "relu","relu"),
+                        validation= 0, 
 ) 
 
 
@@ -1008,15 +1003,15 @@ best_tune_nnet$hidden_units   ## 20 10  5
 
 set.seed(270499)
 nn_tune2_log<-brulee_mlp(recipe_nnet_3_log, 
-                        train2,
-                        hidden_units = c(20,10,5),
-                        penalty = best_tune_nnet$penalty[1],
-                        dropout = best_tune_nnet$dropout[1],
-                        epochs = best_tune_nnet$epochs[1],
-                        learn_rate =best_tune_nnet$learn_rate[1],
-                        activation = c("relu", "relu","relu"),
-                        stop_iter = 100, 
-                        validation= 0, 
+                         train2,
+                         hidden_units = c(20,10,5),
+                         penalty = best_tune_nnet$penalty[1],
+                         dropout = best_tune_nnet$dropout[1],
+                         epochs = best_tune_nnet$epochs[1],
+                         learn_rate =best_tune_nnet$learn_rate[1],
+                         activation = c("relu", "relu","relu"),
+                         stop_iter = 100, 
+                         validation= 0, 
 ) 
 
 
@@ -1208,7 +1203,3 @@ test_nnet_tune_log <- test_full %>%
 # Guardar prediccion
 setwd(paste0(wd,"\\Resultados\\NeuralNetwork"))
 write.csv(test_nnet_tune_log,"NeuralNetwork_3capas_hidden_units_(20,10,5)_penalty_0.01_epochs_200.csv",row.names = F) 
-
-
-
-
