@@ -1,0 +1,703 @@
+[33mcommit b6ff58a519f6c5d6726ad00f0bf29cd19567bc12[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Dec 1 09:10:45 2024 -0500
+
+    Add files via upload
+
+[33mcommit 154d11a09c9e9fd2c48e9c5e7f8da0c056f0a0d9[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Dec 1 09:09:53 2024 -0500
+
+    Add files via upload
+
+[33mcommit 88e990de97aac14222513e1cd5e48fbf1c631828[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Dec 1 09:09:13 2024 -0500
+
+    Delete Códigos/2. Estadisticas.R
+
+[33mcommit 297edfdc183555b71375f09e541575f1e5c8e3fb[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Dec 1 09:00:15 2024 -0500
+
+    Delete Bases/Bases
+
+[33mcommit e69cbc085c2330f4879883fffc5cfbb702a17084[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Dec 1 08:59:47 2024 -0500
+
+    Add files via upload
+
+[33mcommit dbbdab6828dad3f91d2321edd68c05be992388cb[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Dec 1 08:59:28 2024 -0500
+
+    Create Bases
+
+[33mcommit 18c4511361855b6173de8f278b32aaa6e9341a32[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Dec 1 08:59:14 2024 -0500
+
+    Delete Bases/train.rds
+
+[33mcommit e004eca608af29def201664848b4ab332ea0b5ca[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Dec 1 08:58:50 2024 -0500
+
+    Delete Bases/test.rds
+
+[33mcommit 614004cf6349c98e9becc14789f500a392dbc0c1[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Dec 1 08:42:05 2024 -0500
+
+    Create Gráficas
+
+[33mcommit f3580e3f77f0c25305dfab89b07b8c177ff10ed9[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Dec 1 08:41:36 2024 -0500
+
+    Delete Gráficas
+
+[33mcommit e3063fd8b2d7ea1eb6c46143601e8f2cd07a9b93[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Dec 1 08:41:23 2024 -0500
+
+    Create Gráficas
+
+[33mcommit 6920d5bda45a386952f2156dc238a13ef2204620[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Dec 1 08:40:58 2024 -0500
+
+    Modelo Juliet
+
+[33mcommit c725fc8e96cc7cf49f98a3088e85c2ac1f456ad8[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Dec 1 08:40:13 2024 -0500
+
+    limpieza
+
+[33mcommit c523cc28fe398cd192029f7666ce8f771934d1cc[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Dec 1 08:39:33 2024 -0500
+
+    nuevo
+
+[33mcommit f90d56d63c4e1d260bad5be4c453fae89c2d9c48[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Dec 1 08:39:13 2024 -0500
+
+    estadisticas
+
+[33mcommit 2bfabec2a9309845137a2b7dc50214d3edb5f4c6[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Dec 1 08:38:41 2024 -0500
+
+    Delete Códigos/2.Estadisticas.R
+
+[33mcommit fea2404ddcf4f3adca45734e2a6a49194d1a90a6[m
+Author: stevrss <js.ramirezs12@uniandes.edu.co>
+Date:   Sat Nov 30 23:11:18 2024 -0500
+
+    Ir actualizando
+
+[33mcommit 3af8f57751f8a371346ba446bdb1f27e70535db8[m
+Merge: 00f5969 8ebc13b
+Author: stevrss <js.ramirezs12@uniandes.edu.co>
+Date:   Sat Nov 30 23:10:52 2024 -0500
+
+    Merge branch 'main' of https://github.com/stevrss/Problem-Set-3-Machine-Learning_2024
+
+[33mcommit 00f596918fd5d45b56acf7fbf9cb264fbcee0dcc[m
+Author: stevrss <js.ramirezs12@uniandes.edu.co>
+Date:   Sat Nov 30 23:10:47 2024 -0500
+
+    ir al pie
+
+[33mcommit 8f73157a7d2a82b430da1fa6ce0570385e07ca60[m
+Author: stevrss <js.ramirezs12@uniandes.edu.co>
+Date:   Sat Nov 30 23:08:12 2024 -0500
+
+    eliminar
+
+[33mcommit e1415ce27d1c1695da090a15e9df66b140e483a4[m
+Author: stevrss <js.ramirezs12@uniandes.edu.co>
+Date:   Sat Nov 30 23:07:12 2024 -0500
+
+    Acts
+
+[33mcommit 8c4244b4449a2872cfb14c33a1b78d8b1d05888c[m
+Author: stevrss <js.ramirezs12@uniandes.edu.co>
+Date:   Sat Nov 30 16:52:51 2024 -0500
+
+    Actualizacion Colab
+
+[33mcommit 8ebc13b7907f95d9b106671f78cf87a54593917c[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 30 12:51:49 2024 -0500
+
+    Create XGBoost_model1_nr500_maxd6_eta0.2_g0.1_col0.66_min10_sub0.8.csv
+
+[33mcommit 48648781f5b15669a18ffbf6455d0a00dc31e799[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 30 12:51:45 2024 -0500
+
+    Create XGBoost_model1_nr500_maxd6_eta0.1_g0.1_col0.66_min15_sub0.8.csv
+
+[33mcommit fdc2aa8a255bb76bab029df491e7f3dc27cd74af[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 30 12:51:43 2024 -0500
+
+    Create XGBoost_model1_nr500_maxd6_eta0.15_g0.2_col0.66_min10_sub0.8.csv
+
+[33mcommit f7314eb49bd38dc45f71842b26c14d33e7e4e3fe[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 30 12:51:40 2024 -0500
+
+    Create XGBoost_model1_nr500_maxd6_eta0.15_g0.1_col0.66_min20_sub0.8.csv
+
+[33mcommit eefad7998ec99a894c8f0edadd423aeff19926de[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 30 12:51:38 2024 -0500
+
+    Update 2. Codigo_Diego.R
+
+[33mcommit 90d4cbebb4c9639b65af9218c32a0830962d145f[m
+Author: HenryC2 <82994363+HenryC2@users.noreply.github.com>
+Date:   Sat Nov 30 09:55:56 2024 -0500
+
+    Pruebas red neuronal 3 capas
+
+[33mcommit 5e1519e80c84a100e199446b6f021352185caec8[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Fri Nov 29 20:53:10 2024 -0500
+
+    limpieza
+
+[33mcommit f145dc79c1a13ca5669b054255110a133ee428a4[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Fri Nov 29 20:52:49 2024 -0500
+
+    Eliminar
+
+[33mcommit 264b32ed4cfb9f5f04f55042e09be33ac245ed3b[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Fri Nov 29 20:51:34 2024 -0500
+
+    Add files via upload
+
+[33mcommit 63a1b0fdcecc19e711ec5ad5cddacaf6ea3268df[m
+Merge: 1cf379c 0b44e87
+Author: stevrss <js.ramirezs12@uniandes.edu.co>
+Date:   Fri Nov 29 11:31:58 2024 -0500
+
+    Merge branch 'main' of https://github.com/stevrss/Problem-Set-3-Machine-Learning_2024
+
+[33mcommit 1cf379c4be6ea601714d3b73e1d0324de7a6edda[m
+Author: stevrss <js.ramirezs12@uniandes.edu.co>
+Date:   Fri Nov 29 11:31:46 2024 -0500
+
+    Ultimas actualizaciones
+
+[33mcommit 0b44e879f91850d4f29143a5a0d53be43628cf7c[m
+Author: HenryC2 <82994363+HenryC2@users.noreply.github.com>
+Date:   Thu Nov 28 19:40:18 2024 -0500
+
+    Modificacion en redes neuronales
+
+[33mcommit d2d40442b88a7daa2f97b742584da21657bec9d8[m
+Author: stevrss <js.ramirezs12@uniandes.edu.co>
+Date:   Wed Nov 27 07:52:01 2024 -0500
+
+    Nuevas pruebas
+
+[33mcommit 475ebdb7784ee8de8ed460304d591686debc6214[m
+Merge: 537c3e5 9f04e80
+Author: stevrss <js.ramirezs12@uniandes.edu.co>
+Date:   Wed Nov 27 00:47:48 2024 -0500
+
+    Merge branch 'main' of https://github.com/stevrss/Problem-Set-3-Machine-Learning_2024
+
+[33mcommit 537c3e5971909e0bd0787ad6c7ecaea103bb390d[m
+Author: stevrss <js.ramirezs12@uniandes.edu.co>
+Date:   Wed Nov 27 00:47:40 2024 -0500
+
+    redes 1
+
+[33mcommit 9f04e80fc0a89961ff0157137e56843817c3507c[m
+Author: HenryC2 <82994363+HenryC2@users.noreply.github.com>
+Date:   Wed Nov 27 00:16:25 2024 -0500
+
+    redes neuronales
+
+[33mcommit 6c1d44f28fada0dbea8b800d402b6de5b1503635[m
+Author: stevrss <js.ramirezs12@uniandes.edu.co>
+Date:   Tue Nov 26 23:26:46 2024 -0500
+
+    Codigo de BoW
+
+[33mcommit df7ce0cdfe18ff70c3b926fc078537589388ad14[m
+Author: stevrss <js.ramirezs12@uniandes.edu.co>
+Date:   Tue Nov 26 21:10:38 2024 -0500
+
+    Configurando Git LFS
+
+[33mcommit 786d437e66adf9ecd871a2eac0b564388393563a[m
+Author: stevrss <js.ramirezs12@uniandes.edu.co>
+Date:   Tue Nov 26 21:35:49 2024 -0500
+
+    Prueba
+
+[33mcommit bd527e0bfe5d9565e68be24bcbc7fb67963e1d35[m
+Author: HenryC2 <82994363+HenryC2@users.noreply.github.com>
+Date:   Tue Nov 26 20:59:20 2024 -0500
+
+    regresion lineal
+
+[33mcommit 135c8301fc43163b958c5ca847ebe1046224f194[m
+Author: HenryC2 <82994363+HenryC2@users.noreply.github.com>
+Date:   Tue Nov 26 06:25:51 2024 -0500
+
+    Resultados Elastic Net Espacial
+
+[33mcommit e700a1c15d662edf5da641e4be700ce4f0350c89[m
+Merge: 1ed072f 059e971
+Author: HenryC2 <82994363+HenryC2@users.noreply.github.com>
+Date:   Tue Nov 26 05:30:36 2024 -0500
+
+    Merge branches 'main' and 'main' of https://github.com/stevrss/Problem-Set-3-Machine-Learning_2024
+
+[33mcommit 1ed072fd11dd4096992a6e6637079479a29f6d62[m
+Author: HenryC2 <82994363+HenryC2@users.noreply.github.com>
+Date:   Tue Nov 26 05:30:06 2024 -0500
+
+    Modificaciones al modelo
+
+[33mcommit 059e97190e542b2db2c5acdc409e2f2c99d95512[m
+Author: HenryC2 <82994363+HenryC2@users.noreply.github.com>
+Date:   Tue Nov 26 05:02:13 2024 -0500
+
+    Update README.md
+    
+    Modificacion readme
+
+[33mcommit 29a9e52271d7fd0e1c2af006d3448298b4d1e5a7[m
+Author: HenryC2 <82994363+HenryC2@users.noreply.github.com>
+Date:   Tue Nov 26 04:55:19 2024 -0500
+
+    arreglos
+
+[33mcommit fc3bd5326c5b8574934cb218251117f6b7c70440[m
+Author: HenryC2 <82994363+HenryC2@users.noreply.github.com>
+Date:   Tue Nov 26 04:52:29 2024 -0500
+
+    arreglos en el codigo
+
+[33mcommit 877b5392dd8e4e7882ee67b15cc808843f4c8be9[m
+Author: HenryC2 <82994363+HenryC2@users.noreply.github.com>
+Date:   Tue Nov 26 04:41:56 2024 -0500
+
+    #Prueba de Elastic Net y Superlernes
+
+[33mcommit 7a6ec68238339ff0d436c6d5259af07ac52cc8d1[m
+Author: HenryC2 <82994363+HenryC2@users.noreply.github.com>
+Date:   Mon Nov 25 21:46:36 2024 -0500
+
+    Preparación del codigo
+
+[33mcommit 67a65e27c355cdb868a5377310b422e27ca27ab0[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sun Nov 24 23:52:22 2024 -0500
+
+    Update 2. Codigo_Diego.R
+
+[33mcommit 6d1e50c88dae0dba837550806785b6ac8c4ef26a[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sun Nov 24 23:49:09 2024 -0500
+
+    Update 2. Codigo_Diego.R
+
+[33mcommit 2ee3d28442a4d2a003cdd140969f16450916a14e[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sun Nov 24 23:49:06 2024 -0500
+
+    Create XGBoost_model1_nr500_maxd6_eta0.05_g0.1_col0.66_min25_sub0.8.csv
+
+[33mcommit 59e0c4d2b3a21ab34b5bb0a90ddf1fbd8e11d4b2[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sun Nov 24 23:09:18 2024 -0500
+
+    Update 2. Codigo_Diego.R
+
+[33mcommit 71ec9939417161e2431955756ecf0aee7873a799[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sun Nov 24 22:22:38 2024 -0500
+
+    Update XGBoost_model1_nr500_maxd4_eta0.25_col0.66_min50_sub0.4.csv
+
+[33mcommit 022143030043b0a772733694aa6ddbfe2676bab6[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sun Nov 24 22:22:34 2024 -0500
+
+    Update 2. Codigo_Diego.R
+
+[33mcommit 7bb7ea5b5017787bde89aaa1eb6a0dba6a1e2b53[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Nov 24 12:54:32 2024 -0500
+
+    Eliminacion
+
+[33mcommit e9b63223e7b0d997ad762ec4abe9d68e2ea0123f[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Nov 24 12:54:11 2024 -0500
+
+    Add files via upload
+
+[33mcommit 9b8c7f00f43b1a65edba68349ae207287a7cf474[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Nov 24 12:53:51 2024 -0500
+
+    Create Bases
+
+[33mcommit acd020928cb2125bc1dad617adf037ddf192838f[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Nov 24 12:53:21 2024 -0500
+
+    elimo¿inar
+
+[33mcommit 8854101ae17f6a95ff082e512ffa0e92e5f13e31[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Nov 24 12:52:58 2024 -0500
+
+    Create Bases
+
+[33mcommit 26fb88fc718ab6a81fe4c6701452153ee21be0aa[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Nov 24 12:52:36 2024 -0500
+
+    chao
+
+[33mcommit 970404f6f5f02d723091fbec1ac8ee427a597e51[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Nov 24 12:52:18 2024 -0500
+
+    Eliminar train
+
+[33mcommit 7f5e22cd671b4df0f8edca15df22597b7c0eb38f[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Nov 24 12:52:03 2024 -0500
+
+    Eliminar base
+
+[33mcommit dda761c04b8c05e77fdabd5686586fe3f4ca0f4a[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Nov 24 12:51:42 2024 -0500
+
+    Agregar codigo
+
+[33mcommit befd5ca343d530c5a6a093e8a9647d0fc77611d5[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sun Nov 24 12:51:20 2024 -0500
+
+    eliminar codigo
+
+[33mcommit 64551f559e83cc1e098a7f28812946fe3da6417f[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 18:51:03 2024 -0500
+
+    Update XGBoost_model1_nr500_maxd4_eta0.25_col0.66_min50_sub0.4.csv
+
+[33mcommit 60d42a595519148c8d6847c530f18883e5664cab[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 18:44:58 2024 -0500
+
+    Update 2. Codigo_Diego.R
+
+[33mcommit 37693cb7b6183a4f0ed6ed27b6bd9e3b294767ca[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 17:52:00 2024 -0500
+
+    Update 0_Script_Base.R
+
+[33mcommit 736a1756ccf5368001162f207411bf47b31759e9[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 17:47:31 2024 -0500
+
+    Update 0_Script_Base.R
+
+[33mcommit abdecab57e8d17cb8b8c9cdb9d608b7d50ecaa45[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 17:45:59 2024 -0500
+
+    Create .Rhistory
+
+[33mcommit 745b9532664bbb3312cada6ca51cac1b71ed16d1[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 17:45:56 2024 -0500
+
+    Update 0_Script_Base.R
+
+[33mcommit 93b8172fe4ef9c7bf41e4de69e43129318bd8e89[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 17:41:23 2024 -0500
+
+    Create .Rhistory
+
+[33mcommit 6e995cc2229946aaeac729a77450f7cdc87276ca[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 17:41:17 2024 -0500
+
+    Update 1.Limpieza_datos.R
+
+[33mcommit 5a20f443bfa3e6aec4a0027d110714deb4d4278d[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 17:41:12 2024 -0500
+
+    Update 0_Script_Base.R
+
+[33mcommit cce181b2d86d0285f77bcd1f3053d673bcf1b95a[m
+Merge: b81d026 ec53439
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 17:41:07 2024 -0500
+
+    Create .RData
+
+[33mcommit b81d02635c91475a8a270f653ac1f69a504f0978[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 17:36:57 2024 -0500
+
+    Update 2. Codigo_Diego.R
+
+[33mcommit d78c12787307331b60d5f2a86c63d2e6d4c8b2b7[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 17:36:50 2024 -0500
+
+    Update 0_Script_Base.R
+
+[33mcommit ec53439be1a39ff029c639a5b9cbe5ef78144227[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sat Nov 23 16:32:35 2024 -0500
+
+    codigo base
+
+[33mcommit 123e75d31a8637fed0b4ff65bef2e033994cfb3e[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sat Nov 23 16:29:55 2024 -0500
+
+    codigo base
+
+[33mcommit 2cc7b5666f9a37f7b1f41d64f8d562eda6a3d5f0[m
+Merge: 4a5443d 80f466e
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sat Nov 23 16:28:09 2024 -0500
+
+    Merge branch 'main' of https://github.com/stevrss/Problem-Set-3-Machine-Learning_2024
+
+[33mcommit 4a5443dd8c7d4abb7fc09aff957935453f023810[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sat Nov 23 16:28:05 2024 -0500
+
+    datos
+
+[33mcommit 80f466ef3f3833afdc18bf6765bfaef294f7176d[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 16:01:25 2024 -0500
+
+    Delete XGBoost_model1_Diego.csv
+
+[33mcommit 7d3af49d23f112c56779c78933d8b744ad5048ba[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 16:01:06 2024 -0500
+
+    Create XGBoost_model1_nr500_maxd4_eta0.25_col0.66_min50_sub0.4.csv
+
+[33mcommit 888efa72911dcfc04f6a9e6fe44ccfff82f6c5ab[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 15:58:40 2024 -0500
+
+    Create XGBoost_model1_Diego.csv
+
+[33mcommit fbadec76b234b7bd0a00c74966b989e81596b58b[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 15:58:37 2024 -0500
+
+    Update 2. Codigo_Diego.R
+
+[33mcommit cf6e2b51821ced538c60f1d4dfe01403f59b08a7[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 15:35:19 2024 -0500
+
+    Update 2. Codigo_Diego.R
+
+[33mcommit 35cd390736fdafa0db8bf7e9e45b8a8d39b85d11[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 15:04:40 2024 -0500
+
+    Update 2. Codigo_Diego.R
+
+[33mcommit 276e1bd8055e7009fb60a114c91d6852abf8d104[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 14:48:58 2024 -0500
+
+    Update 2. Codigo_Diego.R
+
+[33mcommit 87ef4cfcb22e9b1a02e847b2f4dec4dcd03a2143[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sat Nov 23 13:26:25 2024 -0500
+
+    datos espaciales
+
+[33mcommit 8ecefc3d75d2f7c5be587d8a8edcb7302675ac3d[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sat Nov 23 13:25:47 2024 -0500
+
+    Bases
+
+[33mcommit 8c59d268d9d0429cf0b5e1a93d0142c39b31a76a[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sat Nov 23 13:25:14 2024 -0500
+
+    limpieza datos
+
+[33mcommit b504362b3113e8dbeccdf9a24a366d9add85e0dd[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Sat Nov 23 13:24:26 2024 -0500
+
+    data
+
+[33mcommit 6282fc2264b99415f726e18ee28a47ac8ba3a1c6[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 12:11:58 2024 -0500
+
+    Update 1_Limpieza_datos.R
+
+[33mcommit f48c695b46d26bffdee8c4bb24c44b4b99d5c476[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 12:02:44 2024 -0500
+
+    Update 1_Limpieza_datos.R
+
+[33mcommit e5fadbfdc313f60d6d1c7b993152fd0cb5fe2123[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 11:51:57 2024 -0500
+
+    Update 1_Limpieza_datos.R
+
+[33mcommit 97d43e4d75e29a9173a6a3715722c92b69458d6a[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 11:39:33 2024 -0500
+
+    Update 1_Limpieza_datos.R
+
+[33mcommit 43ea8740081be0d1cf7acc668cf72a0e7f9d9138[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 11:38:17 2024 -0500
+
+    Update 1_Limpieza_datos.R
+
+[33mcommit b98547c6dc2f8c5f7a7884972408a0fd6dc2d252[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 11:36:16 2024 -0500
+
+    Delete 1_Limpieza_datos.R
+
+[33mcommit 979b99d83e877e80b55e70d627e430b2666f30a6[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 11:30:37 2024 -0500
+
+    Create 2. Codigo_Diego.R
+
+[33mcommit bb1ace93889f6345fe6d661a4c59443147db9e20[m
+Author: Diego Fernando Cuesta Mora <dfcuesta99@gmail.com>
+Date:   Sat Nov 23 11:28:58 2024 -0500
+
+    Update 0_Script_Base.R
+
+[33mcommit 80d41255f49c3fc9a14856a54d339b647d576e24[m
+Author: stevrss <js.ramirezs12@uniandes.edu.co>
+Date:   Thu Nov 21 10:34:11 2024 -0500
+
+    CR
+
+[33mcommit e82fb34431fdbb465b5c59cdc617531069e3bf3e[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Thu Nov 21 09:37:22 2024 -0500
+
+    modificaciones
+
+[33mcommit cc5ec336fa6590bc54f3b14cb05ba4da7e8b8d4f[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Wed Nov 20 22:45:06 2024 -0500
+
+    avance
+
+[33mcommit 41055191a8fc60cdec7c5857fc4ae9b9fdc97806[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Wed Nov 20 22:43:32 2024 -0500
+
+    pisos
+
+[33mcommit c52a48930cf87859a38f5f5dd433562816dbb943[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Wed Nov 20 22:33:54 2024 -0500
+
+    datos
+
+[33mcommit 1dd400b5cf82f1cb9209b0eea9def4ff42b04a9e[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Wed Nov 20 21:54:25 2024 -0500
+
+    Bases
+
+[33mcommit ea811da738634610ce10670080941b658584cb5c[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Wed Nov 20 16:42:16 2024 -0500
+
+    mapas2
+
+[33mcommit 1015085cbe5563280baa6b0ca9f2dc76ca11f7a5[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Wed Nov 20 16:27:32 2024 -0500
+
+    Mapas
+
+[33mcommit 2ea73aece11c320c271f9b471b4b49de99d29aad[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Wed Nov 20 13:37:07 2024 -0500
+
+    tratamiento base
+
+[33mcommit 00e30713e5c07a946b0db050b999355241a4e5ca[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Wed Nov 20 12:14:26 2024 -0500
+
+    Construccion base
+
+[33mcommit 7ddd9d1fa57f8aa75089197d94f3c8277d42ab31[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Wed Nov 20 10:55:01 2024 -0500
+
+    codigos
+
+[33mcommit a657c0e7ba9bc2101bd3bbe6c4fa12302a2124f2[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Tue Nov 19 15:10:23 2024 -0500
+
+    datos
+
+[33mcommit adf4dcd3a4e4973921c10a56a2d2faa4a14a4a1c[m
+Author: Juliet-Molano <j.molanorizo@uniandes.edu.co>
+Date:   Tue Nov 19 13:44:00 2024 -0500
+
+    limpieza
+
+[33mcommit d33f5ecd06e6a2522b9e25098e66d95adcf53d61[m
+Author: stevrss <127554001+stevrss@users.noreply.github.com>
+Date:   Tue Nov 12 18:31:38 2024 -0500
+
+    Update README.md
+
+[33mcommit 5a8d8b06ebc293b17911af5da08c282bf6e36bee[m
+Author: stevrss <127554001+stevrss@users.noreply.github.com>
+Date:   Tue Nov 12 18:28:19 2024 -0500
+
+    Initial commit
