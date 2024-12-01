@@ -735,7 +735,7 @@ write.csv(test_nnet_2,"NeuralNetwork_2capas_hidden_units_10_penalty_0.001_epochs
 
 
 
-# Red Neuronal 2 capas con logaritmo del precio ------------------------------------------------------------
+# Red Neuronal 3 capas con logaritmo del precio ------------------------------------------------------------
 
 
 install.packages("recipes")  # Instala el paquete si no lo tienes
@@ -747,7 +747,7 @@ test2$log_price <- log1p(test2$price)
 
 
 #Formula
-formula_nnet_2 <- as.formula(
+formula_nnet_2_log <- as.formula(
   "log_price ~ distancia_parque + area_parque + 
                  distancia_policia + distancia_gym + distancia_bus +
                  distancia_super + distancia_bar + distancia_hosp + distancia_cole + 
@@ -759,19 +759,19 @@ formula_nnet_2 <- as.formula(
 
 
 
-recipe_nnet_2 <-
-  recipe(formula_nnet_2, data = train2)  %>%
+recipe_nnet_2_log <-
+  recipe(formula_nnet_2_log, data = train2)  %>%
   step_novel(all_nominal_predictors()) %>%          # Maneja clases no vistas
   step_dummy(all_nominal_predictors()) %>%         # Crear variables dummy
   step_zv(all_predictors()) %>%                    # Eliminar varianza cero
   step_normalize(all_numeric_predictors())    # Normalizar predictores
 
 #Se ajusta el modelo
-nn_b<-  brulee_mlp(recipe_nnet_2, 
+nn_b_log<-  brulee_mlp(recipe_nnet_2_log, 
                    train2,
                    epochs = 200, 
-                   hidden_units = c(10,10),
-                   activation = c("relu", "relu"),
+                   hidden_units = c(10,10,10),
+                   activation = c("relu", "relu","relu"),
                    learn_rate = 0.01,
                    penalty =  0.001, 
                    dropout= 0.1, 
@@ -781,11 +781,11 @@ nn_b<-  brulee_mlp(recipe_nnet_2,
 
 
 # Evaluación en el test
-test_predictions_2 <- predict(nn_b, test2) %>% 
-  mutate(price_pred = .pred)  # Devolver al valor original
+test_predictions_2_log <- predict(nn_b_log, test2) %>% 
+  mutate(price_pred = expm1(.pred))  # Devolver al valor original
 
 test2 <- test2 %>%
-  mutate(price_pred = test_predictions_2$price_pred)
+  mutate(price_pred = test_predictions_2_log$price_pred)
 
 
 # Calcular MAE
@@ -798,15 +798,417 @@ mae_result
 
 
 # Prediccion fuera de muestra 
-predic_nnet_2 <- predict(nn_b, new_data = test_full) %>%
-  mutate(price_pred = .pred) 
-test_nnet_2 <- test_full %>%
-  mutate(price = predic_nnet_2$price_pred) %>%
+predic_nnet_2_log <- predict(nn_b_log, new_data = test_full) %>%
+  mutate(price_pred = expm1(.pred)) 
+test_nnet_2_log <- test_full %>%
+  mutate(price = predic_nnet_2_log$price_pred) %>%
   select(property_id, price)
 
 
 # Guardar prediccion
 setwd(paste0(wd,"\\Resultados\\NeuralNetwork"))
-write.csv(test_nnet_2,"NeuralNetwork_2capas_hidden_units_10_penalty_0.001_epochs_200.csv",row.names = F) 
+write.csv(test_nnet_2_log,"NeuralNetwork_2capas_hidden_units_10_penalty_0.001_epochs_200.csv",row.names = F) 
+
+
+
+
+# Red Neuronal 3 capas con logaritmo, 2do modelo ------------------------------------------------------------
+
+
+#Formula
+formula_nnet_2_log <- as.formula(
+  "log_price ~ distancia_parque + area_parque + 
+                 distancia_policia + distancia_gym + distancia_bus +
+                 distancia_super + distancia_bar + distancia_hosp + distancia_cole + 
+                 distancia_cc + distancia_rest + distancia_libreria + distancia_uni + 
+                 distancia_banco + dist_avenida + rooms_imp2 + bedrooms + bathrooms_imp2 + 
+                 property_type_2 + localidad + n_pisos_numerico + are + parqu + balcon + 
+                 remodel + sector"
+)
+
+recipe_nnet_2_log <-
+  recipe(formula_nnet_2_log, data = train2)  %>%
+  step_novel(all_nominal_predictors()) %>%          # Maneja clases no vistas
+  step_dummy(all_nominal_predictors()) %>%         # Crear variables dummy
+  step_zv(all_predictors()) %>%                    # Eliminar varianza cero
+  step_normalize(all_numeric_predictors())    # Normalizar predictores
+
+# Definimos validación cruzada espacial 
+train_sf_nnet <- st_as_sf(
+  train2, 
+  coords = c("lon", "lat"),
+  crs = 4326
+)
+
+set.seed(86936)
+block_folds <- spatial_block_cv(train_sf_nnet, v = 5)
+
+#Se ajusta el modelo
+
+nnet_tune_log <- 
+  mlp(
+    hidden_units = tune(),
+    penalty = tune(),
+    dropout =tune(),
+    epochs = tune(),
+    learn_rate =tune(),
+    activation = tune()) %>% 
+  set_mode("regression") %>% 
+  set_engine("brulee")
+
+#Se define la grilla
+grid_values_nnet <- crossing( 
+  hidden_units = list(c(5,10,10), c(10,10,10), c(5,10,20), c(20,10,5)),
+  penalty = 10^seq(from=-3,to=-2, by=0.5 ),
+  dropout = 0,
+  epochs = 200,
+  learn_rate =0.1,
+  activation = list(c("relu", "relu", "relu"))
+)
+
+#Se especifica el nuevo workflow
+workflow_tune_nnet <- workflow() %>% 
+  add_recipe(recipe_nnet_2_log) %>%
+  add_model(nnet_tune_log) 
+
+#Se entrena el modelo
+set.seed(86936)
+
+tune_nnet_log <- tune_grid(
+  workflow_tune_nnet,         
+  resamples = block_folds,  
+  grid = grid_values_nnet,        
+  metrics = metric_set(mae)  
+)
+#Se escoge el mejor
+best_tune_nnet <- select_best(tune_nnet_log, metric = "mae")
+best_tune_nnet$hidden_units   ## 20 10  5
+
+
+set.seed(270499)
+nn_tune_log<-brulee_mlp(recipe_nnet_2_log, 
+                     train2,
+                     hidden_units = c(20,10,5),
+                     penalty = best_tune_nnet$penalty[1],
+                     dropout = best_tune_nnet$dropout[1],
+                     epochs = 300,
+                     learn_rate =best_tune_nnet$learn_rate[1],
+                     activation = c("relu", "relu","relu"),
+                     validation= 0, 
+) 
+
+
+
+# Evaluación en el test
+test_predictions_tune_log <- predict(nn_tune_log, test2) %>% 
+  mutate(price_pred = expm1(.pred))  # Devolver al valor original
+
+test2 <- test2 %>%
+  mutate(price_pred = test_predictions_tune_log$price_pred)
+
+
+# Calcular MAE
+mae_result <- mae(
+  data = test2,
+  truth = price,  # Variable objetivo transformada
+  estimate = price_pred    # Predicciones
+)
+mae_result
+
+
+# Prediccion fuera de muestra 
+predic_nnet_tune_log <- predict(nn_tune_log, new_data = test_full) %>%
+  mutate(price_pred = expm1(.pred)) 
+test_nnet_tune_log <- test_full %>%
+  mutate(price = predic_nnet_tune_log$price_pred) %>%
+  select(property_id, price)
+
+
+# Guardar prediccion
+setwd(paste0(wd,"\\Resultados\\NeuralNetwork"))
+write.csv(test_nnet_tune_log,"NeuralNetwork_3capas_hidden_units_(20,10,5)_penalty_0.01_epochs_200.csv",row.names = F) 
+
+
+
+
+
+# Red Neuronal 3 capas con logaritmo segundo  ------------------------------------------------------------
+
+
+
+#Formula
+formula_nnet_3_log <- as.formula(
+  "log_price ~ distancia_parque + area_parque + 
+                 distancia_policia + distancia_gym + distancia_bus +
+                 distancia_super + distancia_bar + distancia_hosp + distancia_cole + 
+                 distancia_cc + distancia_rest + distancia_libreria + distancia_uni + 
+                 distancia_banco + dist_avenida + rooms_imp2 + bedrooms + bathrooms_imp2 + 
+                 property_type_2 + localidad + n_pisos_numerico + are + parqu + balcon + 
+                 remodel + sector + segur + estrato_imp"
+)
+
+recipe_nnet_3_log <-
+  recipe(formula_nnet_3_log, data = train2)  %>%
+  step_novel(all_nominal_predictors()) %>%          # Maneja clases no vistas
+  step_dummy(all_nominal_predictors()) %>%         # Crear variables dummy
+  step_zv(all_predictors()) %>%                    # Eliminar varianza cero
+  step_normalize(all_numeric_predictors())    # Normalizar predictores
+
+# Definimos validación cruzada espacial 
+train_sf_nnet <- st_as_sf(
+  train2, 
+  coords = c("lon", "lat"),
+  crs = 4326
+)
+
+set.seed(86936)
+block_folds <- spatial_block_cv(train_sf_nnet, v = 5)
+
+#Se ajusta el modelo
+
+nnet_tune2_log <- 
+  mlp(
+    hidden_units = tune(),
+    penalty = tune(),
+    dropout =tune(),
+    epochs = tune(),
+    learn_rate =tune(),
+    activation = tune()) %>% 
+  set_mode("regression") %>% 
+  set_engine("brulee")
+
+#Se define la grilla
+grid_values_nnet <- crossing( 
+  hidden_units = list(c(10, 10, 10), c(30, 20, 10), c(5,10,20), c(20,10,5), c(10,5,10), c(20,10,20)),
+  penalty = 10^seq(from=-4,to=-2, by=0.5 ),
+  dropout = 0,
+  epochs = c(200, 300),
+  learn_rate =c(0.1, 0.01),
+  activation = list(c("relu", "relu", "relu"))
+)
+
+#Se especifica el nuevo workflow
+workflow_tune2_nnet <- workflow() %>% 
+  add_recipe(recipe_nnet_3_log) %>%
+  add_model(nnet_tune2_log) 
+
+#Se entrena el modelo
+set.seed(869361)
+
+tune_nnet_log <- tune_grid(
+  workflow_tune2_nnet,         
+  resamples = block_folds,  
+  grid = grid_values_nnet,        
+  metrics = metric_set(mae)  
+)
+#Se escoge el mejor
+best_tune_nnet <- select_best(tune_nnet_log, metric = "mae")
+best_tune_nnet$hidden_units   ## 20 10  5
+
+
+set.seed(270499)
+nn_tune2_log<-brulee_mlp(recipe_nnet_3_log, 
+                        train2,
+                        hidden_units = c(20,10,5),
+                        penalty = best_tune_nnet$penalty[1],
+                        dropout = best_tune_nnet$dropout[1],
+                        epochs = best_tune_nnet$epochs[1],
+                        learn_rate =best_tune_nnet$learn_rate[1],
+                        activation = c("relu", "relu","relu"),
+                        stop_iter = 100, 
+                        validation= 0, 
+) 
+
+
+
+# Evaluación en el test
+test_predictions_tune2_log <- predict(nn_tune2_log, test2) %>% 
+  mutate(price_pred = expm1(.pred))  # Devolver al valor original
+
+test2 <- test2 %>%
+  mutate(price_pred = test_predictions_tune2_log$price_pred)
+
+
+# Calcular MAE
+mae_result <- mae(
+  data = test2,
+  truth = price,  # Variable objetivo transformada
+  estimate = price_pred    # Predicciones
+)
+mae_result
+
+
+# Prediccion fuera de muestra 
+predic_nnet_tune2_log <- predict(nn_tune2_log, new_data = test_full) %>%
+  mutate(price_pred = expm1(.pred)) 
+test_nnet_tune2_log <- test_full %>%
+  mutate(price = predic_nnet_tune2_log$price_pred) %>%
+  select(property_id, price)
+
+
+# Guardar prediccion
+setwd(paste0(wd,"\\Resultados\\NeuralNetwork"))
+write.csv(test_nnet_tune2_log,"NeuralNetwork_3capas_hidden_units_(20,10,5)_penalty_0.01_epochs_200.csv",row.names = F) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Red Neuronal 3 capas con logaritmo, 2do modelo ------------------------------------------------------------
+
+
+#Formula
+formula_nnet_2_log <- as.formula(
+  "log_price ~ distancia_parque + area_parque + 
+                 distancia_policia + distancia_gym + distancia_bus +
+                 distancia_super + distancia_bar + distancia_hosp + distancia_cole + 
+                 distancia_cc + distancia_rest + distancia_libreria + distancia_uni + 
+                 distancia_banco + dist_avenida + rooms_imp2 + bedrooms + bathrooms_imp2 + 
+                 property_type_2 + localidad + n_pisos_numerico + are + parqu + balcon + 
+                 remodel + sector + ascensor+ PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + 
+                 PC7 + PC8 + PC9 + PC10 + PC11 + PC12 + PC13 + PC14 + PC15 + PC16 + PC17 +
+                 PC18 + PC19 + PC20 + PC21 + PC22 + PC23 + PC24 + PC25 + PC26 + PC27 + PC28 + 
+                 PC29 + PC30 + PC31 + PC32 + PC33 + PC34 + PC35 + PC36 + PC37 + PC38 + PC39 + 
+                 PC40 + PC41 + PC42 "
+)
+
+
+# Preparación de datos
+train2 <- train2 %>%
+  mutate(
+    across(c(property_type_2, localidad, sector), as.factor)
+  )
+
+# Receta
+recipe_nnet_2_log <- 
+  recipe(formula_nnet_2_log, data = train2) %>%
+  step_novel(all_nominal_predictors()) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_zv(all_predictors()) %>%
+  step_normalize(all_numeric_predictors())
+
+# Definimos validación cruzada espacial 
+train_sf_nnet <- st_as_sf(
+  train2, 
+  coords = c("lon", "lat"),
+  crs = 4326
+)
+
+set.seed(86936)
+block_folds <- spatial_block_cv(train_sf_nnet, v = 5)
+
+#Se ajusta el modelo
+
+nnet_tune_log <- 
+  mlp(
+    hidden_units = tune(),
+    penalty = tune(),
+    dropout =tune(),
+    epochs = tune(),
+    learn_rate =tune(),
+    activation = tune()) %>% 
+  set_mode("regression") %>% 
+  set_engine("brulee")
+
+#Se define la grilla
+grid_values_nnet <- crossing( 
+  hidden_units = list(c(20,10,5), c(10,5,10), c(5,10,15)),
+  penalty = 10^seq(from=-3,to=-2, by=0.5 ),
+  dropout = 0,
+  epochs = 500,
+  learn_rate =0.1,
+  activation = list(c("relu", "relu", "relu"))
+)
+
+#Se especifica el nuevo workflow
+workflow_tune_nnet <- workflow() %>% 
+  add_recipe(recipe_nnet_2_log) %>%
+  add_model(nnet_tune_log) 
+
+#Se entrena el modelo
+set.seed(86936)
+
+tune_nnet_log <- tune_grid(
+  workflow_tune_nnet,         
+  resamples = block_folds,  
+  grid = grid_values_nnet,        
+  metrics = metric_set(mae)  
+)
+#Se escoge el mejor
+best_tune_nnet <- select_best(tune_nnet_log, metric = "mae")
+best_tune_nnet$hidden_units   ## 20 10  5
+
+
+set.seed(270499)
+nn_tune_log<-brulee_mlp(recipe_nnet_2_log, 
+                        train2,
+                        hidden_units = c(20,10,5),
+                        penalty = best_tune_nnet$penalty[1],
+                        dropout = 0,
+                        epochs = 500,
+                        learn_rate =best_tune_nnet$learn_rate[1],
+                        activation = c("relu", "relu","relu"),
+                        validation= 0, 
+) 
+
+
+
+test2 <- test2 %>%
+  mutate(
+    across(c(property_type_2, localidad, sector), as.factor)
+  )
+
+
+# Evaluación en el test
+test_predictions_tune_log <- predict(nn_tune_log, test2) %>% 
+  mutate(price_pred = expm1(.pred))  # Devolver al valor original
+
+test2 <- test2 %>%
+  mutate(price_pred = test_predictions_tune_log$price_pred)
+
+
+# Calcular MAE
+mae_result <- mae(
+  data = test2,
+  truth = price,  # Variable objetivo transformada
+  estimate = price_pred    # Predicciones
+)
+mae_result
+
+
+# Prediccion fuera de muestra 
+predic_nnet_tune_log <- predict(nn_tune_log, new_data = test_full) %>%
+  mutate(price_pred = expm1(.pred)) 
+test_nnet_tune_log <- test_full %>%
+  mutate(price = predic_nnet_tune_log$price_pred) %>%
+  select(property_id, price)
+
+
+# Guardar prediccion
+setwd(paste0(wd,"\\Resultados\\NeuralNetwork"))
+write.csv(test_nnet_tune_log,"NeuralNetwork_3capas_hidden_units_(20,10,5)_penalty_0.01_epochs_200.csv",row.names = F) 
+
+
 
 

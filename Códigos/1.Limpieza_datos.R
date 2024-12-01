@@ -2,6 +2,8 @@
 #---------------------- LIMPIEZA DATA - PROBLEM SET 3 -------------------------#
 #------------------------------------------------------------------------------#
 
+#Autor: Juliet Molano
+
 #-------------------------------------------------------------------------------
 # 1. Cargar base de datos de entrenamiento y testeo ----------------------------
 #-------------------------------------------------------------------------------
@@ -99,10 +101,8 @@
       axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5), # Rotar etiquetas del eje X
       legend.title = element_text(face = "bold") # Título de la leyenda en negrita
     )
-  
   g2
-  
-  ggsave("graf_miss_f2_train.png", plot = g2, width = 10, height = 8, dpi = 300)
+  ggsave("graf_miss_f2_train.png")
   
   # Tablas de porcentajes de missings
   db_miss <- skim(train) %>% dplyr::select(skim_variable, n_missing) # Extraer variables y sus missing
@@ -133,37 +133,44 @@
   # Forma 2: Gráfica con etiquetas descriptivas para el conjunto de test
   g4 <- vis_dat(test) +
     scale_fill_manual(
-      name = "Tipo de dato", # Cambiar el nombre de la leyenda
+      name = "Tipo", # Cambiar título de la leyenda a "Tipo"
       values = c(
         "character" = "#B0C4DE", # Azul claro
         "integer" = "#87CEEB",  # Azul cielo
         "numeric" = "#4682B4",  # Azul acero
-        "NA" = "#D3D3D3"       # Gris claro
-      )) +
-    labs(
-      x = NULL, # No mostrar etiqueta en el eje X
-      y = "Observaciones" # Etiqueta del eje Y
+        "NA" = "#D3D3D3"        # Gris claro
+      )
     ) +
-    scale_x_discrete(labels = c(
-      "property_id" = "ID Propiedad",
-      "city" = "Ciudad",
-      "property_type" = "Tipo Propiedad",
-      "operation_type" = "Tipo Operación",
-      "title" = "Título",
-      "description" = "Descripción",
-      "month" = "Mes",
-      "year" = "Año",
-      "surface_total" = "Superficie Total",
-      "surface_covered" = "Superficie Cubierta",
-      "rooms" = "Habitaciones",
-      "bathrooms" = "Baños",
-      "bedrooms" = "Dormitorios",
-      "price" = "Precio",
-      "lat" = "Latitud",
-      "lon" = "Longitud"
-    )) +
-    theme(axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5)) # Ajustar etiquetas del eje X
-  ggsave("graf_miss_f2_test.png", plot = g4, width = 10, height = 8, dpi = 300)
+    labs(
+      y = "Observaciones", # Etiqueta del eje Y
+      fill = "Tipo"
+    ) +
+    scale_x_discrete(
+      labels = c(
+        "property_id" = "ID Propiedad",
+        "city" = "Ciudad",
+        "property_type" = "Tipo Propiedad",
+        "operation_type" = "Tipo Operación",
+        "title" = "Título",
+        "description" = "Descripción",
+        "month" = "Mes",
+        "year" = "Año",
+        "surface_total" = "Superficie Total",
+        "surface_covered" = "Superficie Cubierta",
+        "rooms" = "Habitaciones",
+        "bathrooms" = "Baños",
+        "bedrooms" = "Dormitorios",
+        "price" = "Precio",
+        "lat" = "Latitud",
+        "lon" = "Longitud"
+      )
+    ) +
+    theme(
+      axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5), # Rotar etiquetas del eje X
+      legend.title = element_text(face = "bold") # Título de la leyenda en negrita
+    )
+  g4
+  ggsave("graf_miss_f2_test.png", plot = g4)
   
   # Tablas de missings para el conjunto de test
   db_miss_test <- skim(test) %>% dplyr::select(skim_variable, n_missing) # Extraer variables y sus missings
@@ -351,7 +358,7 @@ tipo <- ggplot(train, aes(x = (price / 1000000), fill = property_type)) +
     plot.title = element_text(hjust = 0.5, face = "bold"), # Centrar y negrita en el título
     axis.text.x = element_text(angle = 90, hjust = 1, size = 10) # Texto del eje X ajustado
   )
-
+tipo
 # Guardar el gráfico ----------------------------------------------------------
 setwd(paste0(wd, "/Graficas")) # Directorio de salida
 ggsave("tipo_precio.png", plot = tipo, width = 10, height = 8, dpi = 300)
