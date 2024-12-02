@@ -606,6 +606,7 @@ sl <- SuperLearner(
   verbose = TRUE
 )
 
+# Error en vectores
 
 print(sl)
 
