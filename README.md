@@ -21,7 +21,7 @@ Respecto a las carpetas, contienen la siguiente información:
 
 * Output: Esta carpeta contiene los archivos .csv que fueron cargados a la plataforma de Kaggle para el cálculo del MAE. Cada archivo se almacena en una carpeta con el nombre del algoritmo que fue utilizado.
 
-* Resultados: Almacena los resultados de la prediccion de los modelos utilizados en formato CSV sobre la muestra de test sobre la que probamos los modelos en Kaggle. Esta carpeta esta subdividida en modelos.
+* Resultados: Almacena los resultados de la prediccion de los modelos utilizados en formato CSV sobre la muestra de test sobre la que probamos los modelos en Kaggle para el calculo del MAE. Esta carpeta esta subdividida en modelos.
 
 * Datos Espaciales: Contiene la informacion adicional georeferenciada recolectada a traves de Open Street Maps sobre objetos que incluyen los lugares de interes cercanos entre otras variables.
 
